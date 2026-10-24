@@ -127,6 +127,17 @@ export const ITEMS: Item[] = [
     y: 85.2,
   },
   {
+    id: 'water-bottle',
+    src: '/art/water-bottle.svg',
+    alt: "Fia's water bottle",
+    // back of the desk in the gap between the mat and the books, just behind the laptop;
+    // right of where the name ends on load (~890px), so it doesn't cover the "y"
+    x: 975,
+    surface: 'desk',
+    h: 24,
+    y: 50,
+  },
+  {
     id: 'headphones',
     src: '/art/headphones.svg',
     alt: 'A pair of headphones',
