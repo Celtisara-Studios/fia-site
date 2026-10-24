@@ -1,0 +1,92 @@
+:root {
+  --paper: #f4f0e8;
+  --ink: #33312d; /* warm charcoal, not black. Art files in public/art/ use the same value. */
+
+  --serif: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
+  --sans: 'Inter Tight', system-ui, sans-serif;
+  /* Stand-in for Fia's handwriting on notes, until she writes them herself. */
+  --hand: 'Caveat', 'Bradley Hand', cursive;
+
+  /* The one colour on the desk: the sticky note on the lamp, the first thing to click. */
+  --note: #f3e09a;
+  --note-fold: #e2c76c;
+
+  /* The dark the room drops into when the lamp's on, and behind popups. */
+  --shade: rgb(28 26 23 / 0.72);
+
+  /* Ink and paper: slow in, slow out, never springy. */
+  --ease-paper: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Scene proportions, measured from Fia's desk drawing (2000 × 1250). */
+  --rail: 38.6%; /* top rail line: bottom of the wall */
+  --desk: 41%; /* bottom rail line: back of the desk */
+  --lip: 86.9%; /* desk front edge line */
+  --front: 92.6%; /* black front */
+
+  --gutter: clamp(16px, 4vw, 56px);
+
+  /* Hand cursors (public/cursors/), drawn like the desk objects. Hotspots in px of the 32px image. */
+  --cursor-open: url('/cursors/hand-open.svg') 16 16, grab;
+  --cursor-closed: url('/cursors/hand-closed.svg') 16 16, grabbing;
+  --cursor-point: url('/cursors/hand-point.svg') 13 1, pointer;
+
+  color-scheme: light;
+  color: var(--ink);
+  background: var(--paper);
+  font: 400 16px/1.5 var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+/* The desk is a fixed room; only chapters scroll. */
+html:not(.is-chapter),
+html:not(.is-chapter) body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: var(--cursor-point);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Color that leaves an object and floods the screen between desk and chapter. */
+.flood {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  visibility: hidden;
+}

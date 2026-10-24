@@ -1,0 +1,452 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: var(--cursor-open);
+}
+
+.scene.is-dragging,
+.scene.is-dragging .item {
+  cursor: var(--cursor-closed);
+}
+
+/* Wall: tight, soft little dots, drifting slower than the desk. --grid-size must match GRID in Scene.tsx. */
+.scene-grid {
+  --grid-size: 10px;
+  --grid-dot: color-mix(in srgb, var(--ink) 22%, var(--paper));
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--rail);
+  background-image: radial-gradient(circle at center, var(--grid-dot) 0 0.7px, transparent 1.1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: 0 100%;
+}
+
+.scene-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scene-line {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.scene-front {
+  fill: var(--ink);
+}
+
+/* Rail between wall and desk, crosshatched. Spans the drawing's two rail lines
+   (y 481→487.5 and 506.5→515.5 of 1250) and follows their slight slope. */
+.scene-rail {
+  position: absolute;
+  inset: 38.48% 0 auto;
+  height: 2.76%;
+  clip-path: polygon(0 0, 100% 18.8%, 100% 100%, 0 73.9%);
+  background:
+    repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, var(--ink) 0 1px, transparent 1px 5px);
+}
+
+.scene-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  /* let hovers reach the wall layer under the desk; objects take pointer events themselves */
+  pointer-events: none;
+}
+
+.wall-name {
+  position: absolute;
+  top: calc(var(--rail) - min(19vh, 22vw) * 1.3);
+  /* Starts just right of the lamp on load (in vh, so it scales with the desk; see Scene.tsx). */
+  margin: 0 0 0 38.3vh;
+  font: 400 min(19vh, 22vw) / 1 var(--serif);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* Objects */
+
+.item {
+  pointer-events: auto;
+  position: absolute;
+  bottom: calc(100% - var(--y) * 1%);
+  height: calc(var(--h) * 1vh);
+  translate: -50% 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: var(--cursor-point);
+}
+
+.item.is-static,
+.item.is-lamp {
+  cursor: inherit;
+}
+
+/* The lamp in two parts (see lamp.ts): the base is desk, the head is a button. */
+.lamp-art {
+  width: calc(var(--h) * 1vh * 698.88 / 1006.88);
+}
+
+.item .lamp-art img {
+  height: auto;
+}
+
+.lamp-base {
+  position: absolute;
+}
+
+.lamp-head {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: var(--cursor-point);
+}
+
+.item .lamp-head img {
+  width: 100%;
+}
+
+/* Sticky notes: soft yellow, charcoal edge, a lifted corner (StickyNote.tsx). */
+.sticky-note {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* The lamp's: on the body of the shade, clear of the opening the light comes from. */
+.lamp-head .sticky-note {
+  left: 29%;
+  top: 18%;
+  width: 46%;
+  aspect-ratio: 1;
+  rotate: -12deg;
+}
+
+.sticky-note svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.note-paper,
+.note-fold {
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.note-paper {
+  fill: var(--note);
+}
+
+.note-fold {
+  fill: var(--note-fold);
+}
+
+.note-text {
+  position: absolute;
+  inset: 6% 7% 17% 6%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--ink);
+  font: 600 clamp(15px, 2.7vh, 32px) / 0.82 var(--hand);
+}
+
+.item-art {
+  position: relative;
+  display: block;
+  height: 100%;
+  transform-origin: 50% 50%;
+  /* an object's resting turn on the desk (items.ts `rotate`); hover turns add on top */
+  rotate: var(--turn, 0deg);
+  transition: transform 0.7s var(--ease-out);
+}
+
+.item img {
+  display: block;
+  height: 100%;
+  width: auto;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* A second drawing in the same frame that fades in on hover (the poster's colour). */
+.item .item-reveal {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-paper);
+}
+
+@media (hover: hover) {
+  .item.has-reveal:hover .item-reveal {
+    opacity: 1;
+  }
+}
+
+.item .item-color {
+  position: absolute;
+  inset: 0;
+  clip-path: circle(0px at 0px 0px);
+}
+
+
+@media (hover: hover) {
+  /* Anything that opens (a chapter, the reading list, a link) turns slightly on hover. */
+  .item.opens:hover .item-art {
+    transform: rotate(3deg);
+  }
+}
+
+.item-label {
+  position: absolute;
+  top: calc(100% + 1.8vh);
+  left: 50%;
+  translate: -50% 0;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.item-label.is-above {
+  top: auto;
+  bottom: calc(100% + 1.6vh);
+}
+
+.item-label::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-paper);
+}
+
+.item:hover .item-label::after,
+.item:focus-visible .item-label::after {
+  transform: scaleX(1);
+}
+
+.item:focus-visible {
+  outline: none;
+}
+
+.item:focus-visible .item-art {
+  outline: 2px solid var(--ink);
+  outline-offset: 8px;
+}
+
+/* UI lives on the black front edge of the desk. */
+.scene-hint {
+  position: absolute;
+  inset: var(--front) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 var(--gutter) env(safe-area-inset-bottom);
+  color: var(--paper);
+  font: 500 11px/1.2 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.for-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .for-touch {
+    display: inline;
+  }
+  .for-mouse {
+    display: none;
+  }
+}
+
+/* Lamp on: the room goes dark, drawn over everything but the hint, with the
+   lamp's beam and bulb left as clean paper. */
+.scene-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.scene.is-lit .scene-shade {
+  visibility: visible;
+}
+
+.shade-dark {
+  fill: var(--shade);
+}
+
+.beam-edge {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The bulb stuttering out at the end of the tour: for a beat the whole room is dark. */
+.scene-shade.is-flickering :is(.beam-cut, .beam-pool, .lamp-bulb, .beam-edge) {
+  visibility: hidden;
+}
+
+/* The lamp's tour. Its words and controls are on a panel floating beside whatever's
+   lit; a click anywhere else on the desk ends it. */
+.tour-catch {
+  position: absolute;
+  inset: 0;
+  cursor: var(--cursor-point);
+}
+
+/* A paper panel with a charcoal edge, like the book list's card. Scene places it
+   (placePanel) once it has measured itself, and it floats in as the light lands. */
+.tour-panel {
+  position: absolute;
+  width: clamp(260px, 36vh, 340px);
+  padding: 18px 20px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  box-shadow: 6px 6px 0 color-mix(in srgb, var(--ink) 30%, transparent);
+  cursor: default;
+  animation: panel-float 0.5s var(--ease-out) 0.75s both;
+}
+
+.tour-title,
+.tour-text {
+  margin: 0;
+  /* clear of the close button */
+  padding-right: 22px;
+  font-family: var(--hand);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.tour-title {
+  margin-bottom: 4px;
+  font-size: clamp(24px, 3.8vh, 40px);
+  line-height: 1;
+}
+
+.tour-text {
+  font-size: clamp(17px, 2.8vh, 30px);
+  line-height: 1.05;
+}
+
+.tour-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink);
+  transition: border-color 0.3s var(--ease-paper);
+}
+
+.tour-close:hover {
+  border-color: var(--ink);
+}
+
+.tour-close svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* Where it is in the tour, then Back and Next. */
+.tour-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 30%, var(--paper));
+}
+
+.tour-count {
+  margin-right: auto;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tour-btn {
+  height: 30px;
+  padding: 0 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.3s var(--ease-paper),
+    color 0.3s var(--ease-paper);
+}
+
+.tour-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.tour-btn.is-quiet {
+  padding: 0 10px;
+  border-color: transparent;
+}
+
+.tour-btn.is-quiet:hover {
+  background: none;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@keyframes panel-float {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-panel {
+    animation-delay: 0s;
+    animation-duration: 1ms;
+  }
+}

@@ -1,0 +1,258 @@
+.chapter {
+  position: relative;
+  z-index: 20;
+  /* One ruled line. Everything on the page is a multiple of it. */
+  --lh: round(clamp(40px, 3.4vw, 54px), 2px);
+  --margin-x: clamp(40px, 11vw, 168px);
+  --indent: clamp(20px, 3.5vw, 56px);
+  /* Where the rule sits inside a line box, as a share of --lh. */
+  --rule-y: 0.74;
+  --rule: color-mix(in srgb, var(--accent) 55%, var(--paper));
+}
+
+.ch-close {
+  position: fixed;
+  top: max(var(--gutter), env(safe-area-inset-top));
+  right: var(--gutter);
+  z-index: 5;
+  height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: var(--cursor-point);
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.ch-close:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Cover: the color the object flooded the screen with. */
+
+.cover {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--gutter);
+  background: var(--accent);
+}
+
+.cover-name,
+.cover-kicker,
+.cover-cue {
+  margin: 0;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cover-name {
+  position: absolute;
+  top: max(var(--gutter), env(safe-area-inset-top));
+  left: var(--gutter);
+  line-height: 40px;
+}
+
+.cover-inner {
+  padding-bottom: 11vh;
+}
+
+.cover-kicker {
+  display: flex;
+  gap: 2.5em;
+  margin-bottom: 3.2vh;
+}
+
+.cover-title {
+  margin: 0 0 0 -0.05em;
+  padding: 0.04em 0.06em 0.1em 0;
+  font: 400 clamp(46px, 17vw, 300px) / 0.86 var(--serif);
+  letter-spacing: -0.03em;
+}
+
+.cover-sub {
+  margin: 2.2vh 0 0;
+  font: italic 400 clamp(20px, 2.3vw, 34px) / 1.15 var(--serif);
+}
+
+.cover-cue {
+  position: absolute;
+  right: var(--gutter);
+  bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cover-cue::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Page: a spiral-notebook page sliding up over the cover. The punched holes
+   are cut out of it, so the cover's color shows through them. */
+
+.page {
+  --hole: 6px;
+  --pitch: 30px;
+  --band: 44px;
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  background: var(--paper);
+  -webkit-mask:
+    radial-gradient(circle, #0000 var(--hole), #000 calc(var(--hole) + 0.75px)) 0 0 / var(--pitch) var(--band) repeat-x,
+    linear-gradient(#000 0 0) 0 var(--band) / 100% calc(100% - var(--band)) no-repeat;
+  mask:
+    radial-gradient(circle, #0000 var(--hole), #000 calc(var(--hole) + 0.75px)) 0 0 / var(--pitch) var(--band) repeat-x,
+    linear-gradient(#000 0 0) 0 var(--band) / 100% calc(100% - var(--band)) no-repeat;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 var(--margin-x);
+  width: 1.5px;
+  background: var(--accent);
+}
+
+.page-head {
+  padding: calc(var(--lh) * 2.5) var(--gutter) var(--lh) calc(var(--margin-x) + var(--indent));
+}
+
+.page-intro {
+  max-width: 34rem;
+  margin: 0;
+  font: 400 15px/1.65 var(--sans);
+}
+
+.poem {
+  padding: 0 var(--gutter) 0 calc(var(--margin-x) + var(--indent));
+  background: linear-gradient(
+      to bottom,
+      #0000 calc(var(--lh) * var(--rule-y)),
+      var(--rule) 0,
+      var(--rule) calc(var(--lh) * var(--rule-y) + 1px),
+      #0000 0
+    )
+    0 0 / 100% var(--lh);
+}
+
+.stanza {
+  display: grid;
+  grid-template-columns: minmax(0, 36rem) minmax(0, 15rem);
+  column-gap: clamp(24px, 7vw, 128px);
+  align-items: start;
+  margin-bottom: var(--lh);
+}
+
+.stanza-lines {
+  margin: 0;
+  font: 400 calc(var(--lh) * 0.58) / var(--lh) var(--serif);
+}
+
+.ln {
+  display: block;
+  width: fit-content;
+  padding-right: 0.2em;
+}
+
+.ln.is-todo {
+  font: 400 12px / var(--lh) var(--sans);
+  letter-spacing: 0.06em;
+  opacity: 0.5;
+}
+
+.page-intro .ln.is-todo {
+  line-height: inherit;
+}
+
+.is-refrain .stanza-lines {
+  grid-column: 1 / -1;
+  font-size: calc(var(--lh) * 1.12);
+  line-height: calc(var(--lh) * 2);
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+/* Drop the big lines onto a rule instead of floating between two. */
+.is-refrain .ln {
+  position: relative;
+  top: calc(var(--lh) * 0.3);
+}
+
+.note {
+  margin: 0;
+  font: italic 400 calc(var(--lh) * 0.42) / var(--lh) var(--serif);
+}
+
+.note img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sign {
+  margin: 0;
+  font: italic 400 calc(var(--lh) * 0.5) / var(--lh) var(--serif);
+}
+
+/* At least half a screen, so the last lines can scroll far enough to finish writing. */
+.page-end {
+  min-height: 50svh;
+  padding: calc(var(--lh) * 2) 0 calc(var(--lh) * 3);
+}
+
+.end-close {
+  position: relative;
+  top: calc(var(--lh) * 0.3); /* onto a rule, like the refrain */
+  padding: 0;
+  border: 0;
+  background: none;
+  font: italic 400 calc(var(--lh) * 0.9) / calc(var(--lh) * 2) var(--serif);
+  cursor: var(--cursor-point);
+}
+
+.end-close::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 calc(var(--lh) * 0.42);
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease-paper);
+}
+
+.end-close:hover::after,
+.end-close:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 720px) {
+  .chapter {
+    --margin-x: 32px;
+    --indent: 18px;
+  }
+
+  .stanza {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .is-refrain .stanza-lines {
+    font-size: calc(var(--lh) * 0.92);
+  }
+}

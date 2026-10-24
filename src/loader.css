@@ -1,0 +1,57 @@
+.loader {
+  --p: 0; /* drawing progress, 0–1, set by Loader.tsx */
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--paper);
+  transition: opacity 0.4s var(--ease-paper);
+}
+
+.loader.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Everything drawn so far: clipped at the pencil's tip. */
+.loader-drawn {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0);
+}
+
+/* The desk's pencil, tip down on the rail, leaning back like it's being held.
+   The tip sits at the box's top-right corner (pencil.svg ≈ 754, 3), so the
+   translate puts the tip on the anchor point and the turn pivots around it. */
+.loader-pencil {
+  position: absolute;
+  left: calc(var(--p) * 100%);
+  /* middle of the rail band, which slopes slightly down to the right */
+  top: calc(39.5% + var(--p) * 0.62%);
+  height: 10vh;
+  width: auto;
+  transform-origin: 99.86% 0.6%;
+  translate: -99.86% -0.6%;
+  rotate: 154deg;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Sits on the dark front edge, where the desk's hint will be. */
+.loader-caption {
+  position: absolute;
+  inset: var(--front) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 var(--gutter) env(safe-area-inset-bottom);
+  color: var(--paper);
+  font: 500 11px/1.2 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.loader-count {
+  font-variant-numeric: tabular-nums;
+}

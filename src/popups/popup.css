@@ -1,0 +1,173 @@
+.popup {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+}
+
+/* The desk drops into the same dark as when the lamp's on. */
+.popup-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--shade);
+  cursor: var(--cursor-point);
+  animation: popup-fade 0.3s var(--ease-paper) both;
+}
+
+.popup-card {
+  position: relative;
+  width: min(600px, 100%);
+  max-height: calc(100svh - var(--gutter) * 2);
+  overflow: auto;
+  padding: 28px 32px 20px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  animation: popup-rise 0.4s var(--ease-out) both;
+}
+
+.popup.is-leaving .popup-scrim {
+  animation: popup-fade-out 0.22s var(--ease-paper) both;
+}
+
+.popup.is-leaving .popup-card {
+  animation: popup-sink 0.22s var(--ease-paper) both;
+}
+
+.popup-head {
+  position: relative;
+  padding-bottom: 18px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.popup-kicker,
+.book-author {
+  font: 500 11px/1.2 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.popup-kicker {
+  margin: 0 0 10px;
+}
+
+.popup-title {
+  width: fit-content;
+  margin: 0;
+  padding: 0 0.1em;
+  margin-left: -0.1em;
+  font: 400 clamp(44px, 7vw, 64px) / 0.9 var(--serif);
+  letter-spacing: -0.02em;
+  /* a thin sticky-note yellow highlighter swipe low across the word */
+  background: linear-gradient(transparent 68%, var(--note) 68% 88%, transparent 88%);
+}
+
+.popup-close {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  height: 36px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.popup-close:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Ruled like an index card, no numbers: a coloured spine, the title, and the author in small caps beside it. */
+.book-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.book-list li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 16px;
+  padding: 12px 0 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 30%, var(--paper));
+}
+
+.book-list li:last-child {
+  border-bottom: 0;
+}
+
+/* A little upright book spine in its colour, banded near the top and bottom. */
+.book-spine {
+  align-self: center;
+  height: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) 0 22% / 100% 1.5px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) 0 78% / 100% 1.5px no-repeat,
+    var(--spine);
+}
+
+.book-title {
+  font: 400 22px/1.15 var(--serif);
+}
+
+.book-author {
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .book-list li {
+    grid-template-columns: 12px minmax(0, 1fr);
+  }
+  .book-spine {
+    grid-row: span 2;
+  }
+  .book-author {
+    grid-column: 2;
+    text-align: left;
+    margin-top: 4px;
+  }
+}
+
+@keyframes popup-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes popup-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes popup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes popup-sink {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup-scrim,
+  .popup-card {
+    animation-duration: 1ms !important;
+  }
+}

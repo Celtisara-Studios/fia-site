@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Open hand: the desk, ready to drag. One solid charcoal shape with a paper edge, like the desk objects. -->
+  <path d="M8.5 8 A2 2 0 0 1 12.5 8 V6 A2 2 0 0 1 16.5 6 V7 A2 2 0 0 1 20.5 7 V10.25 A1.75 1.75 0 0 1 24 10.25 V21 C24 25 21.5 28 17.5 28 H15 C11.5 28 9.5 26 8.5 23.5 L4.6 17.9 A1.9 1.9 0 0 1 7.6 15.6 L8.5 17 Z" fill="#33312d" stroke="#f4f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke"/>
+  <g fill="none" stroke="#f4f0e8" stroke-width="1" stroke-linecap="round"><path d="M12.5 9 V12"/><path d="M16.5 8 V11"/><path d="M20.5 10.5 V13"/></g>
+</svg>
