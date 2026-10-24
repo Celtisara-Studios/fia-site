@@ -1,7 +1,11 @@
 import type { ChapterId } from '../chapters'
 
-/** Width of one lap of the desk in world px (see DESIGN_HEIGHT in Scene.tsx); everything repeats after this. */
-export const LOOP = 4800
+/**
+ * Width of one lap of the desk in world px (see DESIGN_HEIGHT in Scene.tsx); everything repeats after this.
+ * Just long enough for the objects, so panning never crosses bare desk: the headphones at the end
+ * of a lap sit ~60px left of the next lap's laptop.
+ */
+export const LOOP = 2280
 
 export type Item = {
   id: string
@@ -53,8 +57,8 @@ export const ITEMS: Item[] = [
     id: 'lamp',
     src: '/art/lamp.svg',
     alt: 'An adjustable desk lamp',
-    // Left of the name on load; the name's left margin in scene.css clears it.
-    x: 151,
+    // Right of the books, left of the name on load; the name's left margin in scene.css clears it.
+    x: 351,
     action: 'lamp',
     surface: 'desk',
     h: 40.3,
@@ -65,7 +69,7 @@ export const ITEMS: Item[] = [
     src: '/art/puppy.svg',
     alt: 'A husky puppy figure',
     // at the back of the desk, right of the lamp
-    x: 265,
+    x: 465,
     surface: 'desk',
     h: 15.9,
     y: 47.8,
@@ -75,7 +79,7 @@ export const ITEMS: Item[] = [
     src: '/art/pencil.svg',
     alt: 'A pencil',
     // left of the notebook, turned to stand more upright
-    x: 137,
+    x: 337,
     surface: 'desk',
     h: 10,
     y: 68.4,
@@ -86,7 +90,7 @@ export const ITEMS: Item[] = [
     id: 'notebook',
     src: '/art/sketchbook.png',
     alt: 'A notebook with a ribbon bookmark',
-    x: 257,
+    x: 457,
     surface: 'desk',
     h: 20.6,
     y: 73.5,
@@ -97,7 +101,7 @@ export const ITEMS: Item[] = [
     id: 'cutting-mat',
     src: '/art/cutting-mat.svg',
     alt: 'A cutting mat',
-    x: 623,
+    x: 823,
     surface: 'desk',
     h: 34.9,
     y: 80.6,
@@ -107,11 +111,11 @@ export const ITEMS: Item[] = [
     id: 'books',
     src: '/art/books.svg',
     alt: 'A stack of books',
-    // back right, rising in front of the wall; as low as it goes while clearing the laptop
+    // back left, rising in front of the wall: fully in frame on load, ~19px clear of the lamp's elbow
     action: 'books',
     label: 'Books',
     labelAbove: true, // the laptop's lid is right below the stack
-    x: 1187,
+    x: 120,
     surface: 'desk',
     h: 36.7,
     y: 57,
@@ -120,8 +124,9 @@ export const ITEMS: Item[] = [
     id: 'laptop',
     src: '/art/laptop.svg',
     alt: 'A closed laptop',
-    // front right, ~35px off the mat's right edge
-    x: 1134,
+    // front left, in front of the books; the left edge of the screen cuts it on load (a bit
+    // over half shows) and its right corner stays ~14px clear of the pencil
+    x: 30,
     surface: 'desk',
     h: 31.6,
     y: 85.2,
@@ -130,9 +135,9 @@ export const ITEMS: Item[] = [
     id: 'water-bottle',
     src: '/art/water-bottle.svg',
     alt: "Fia's water bottle",
-    // back of the desk in the gap between the mat and the books, just behind the laptop;
-    // right of where the name ends on load (~890px), so it doesn't cover the "y"
-    x: 975,
+    // back of the desk in the gap between the mat and the sewing machine;
+    // right of where the name ends on load (~1090px), so it doesn't cover the "y"
+    x: 1150,
     surface: 'desk',
     h: 24,
     y: 50,
@@ -141,22 +146,24 @@ export const ITEMS: Item[] = [
     id: 'headphones',
     src: '/art/headphones.svg',
     alt: 'A pair of headphones',
+    // down at the front, their top-left corner just over the yarn basket's bottom-right;
     // just past the right edge on load: found by panning
     href: 'https://open.spotify.com/playlist/3G8By3kXTjUQSF3y3BYsiy',
     label: 'Playlist',
-    x: 1460,
+    labelAbove: true, // below them is the desk's front edge
+    x: 1880,
     surface: 'desk',
     h: 26.8,
-    y: 64.7,
+    y: 85,
   },
   {
     id: 'f1-poster',
     src: '/art/f1-poster.svg',
     hoverSrc: '/art/f1-poster-color.svg',
     alt: 'A Formula 1 poster',
-    // on the wall right of the books, above the headphones; its top runs off the screen.
+    // on the wall right of the yarn basket, above the headphones; its top runs off the screen.
     // Framed and matted, so it's taller than the print alone (the print is ~35vh).
-    x: 1470,
+    x: 1995,
     surface: 'wall',
     h: 40.8,
     y: 33,
@@ -166,7 +173,7 @@ export const ITEMS: Item[] = [
     src: '/art/eraser.svg',
     alt: 'An eraser',
     // just off the mat's top-left corner, between the puppy and the notebook
-    x: 365,
+    x: 565,
     surface: 'desk',
     h: 6.5,
     y: 51.5,
@@ -175,19 +182,32 @@ export const ITEMS: Item[] = [
     id: 'paper-pad',
     src: '/art/paper-pad.svg',
     alt: 'A clipped stack of paper',
-    // left of the lamp: the end of the lap, found by dragging the desk to the right
-    x: LOOP - 60,
+    // front of the desk right of the mat, just under the sewing machine's base (its top edge
+    // stops at the machine's bottom), filling the bare desk there
+    x: 1240,
     surface: 'desk',
     h: 15,
-    y: 72,
+    y: 84.5,
+  },
+  {
+    id: 'glasses',
+    src: '/art/glasses.svg',
+    alt: 'A pair of glasses',
+    // front of the desk, halfway between the paper pad and the headphones' cable; ~16px in
+    // front of the sewing machine's base
+    x: 1530,
+    surface: 'desk',
+    h: 12,
+    y: 83,
   },
   {
     id: 'sewing-machine',
     src: '/art/sewing-machine.svg',
     alt: 'A sewing machine',
-    // further left than the paper pad: off-screen at the start, found by dragging right.
-    // Real-machine scale (~45cm wide next to the ~21cm notebook), set back on the desk.
-    x: LOOP - 405,
+    // back right, where the books used to be, ~34px past the water bottle; the right edge of
+    // the screen cuts it on most laptops. Real-machine scale (~45cm wide next to the ~21cm
+    // notebook), set back on the desk.
+    x: 1420,
     surface: 'desk',
     h: 49.3,
     y: 69,
@@ -196,9 +216,10 @@ export const ITEMS: Item[] = [
     id: 'yarn-basket',
     src: '/art/yarn-basket.svg',
     alt: 'A basket of yarn',
-    // Tucked behind the sewing machine's left end (set further back, so it draws behind).
-    // The one deliberate overlap: the machine in front is solid, with no see-through parts.
-    x: LOOP - 680,
+    // Right of the sewing machine, its left end tucked ~15px behind the machine's right end
+    // (set further back, so it draws behind). The one deliberate overlap: the machine in
+    // front is solid, with no see-through parts.
+    x: 1735,
     surface: 'desk',
     h: 32,
     y: 63,

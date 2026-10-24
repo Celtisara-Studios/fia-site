@@ -68,7 +68,7 @@
   position: absolute;
   top: calc(var(--rail) - min(19vh, 22vw) * 1.3);
   /* Starts just right of the lamp on load (in vh, so it scales with the desk; see Scene.tsx). */
-  margin: 0 0 0 38.3vh;
+  margin: 0 0 0 63.9vh;
   font: 400 min(19vh, 22vw) / 1 var(--serif);
   letter-spacing: -0.02em;
   white-space: nowrap;
