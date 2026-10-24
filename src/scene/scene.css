@@ -14,7 +14,7 @@
   cursor: var(--cursor-closed);
 }
 
-/* Wall: tight, soft little dots, drifting slower than the desk. --grid-size must match GRID in Scene.tsx. */
+/* Wall: tight, soft little dots, moving with the wall (WALL_SPEED). --grid-size must match GRID in Scene.tsx. */
 .scene-grid {
   --grid-size: 10px;
   --grid-dot: color-mix(in srgb, var(--ink) 22%, var(--paper));
@@ -198,6 +198,78 @@
   .item.has-reveal:hover .item-reveal {
     opacity: 1;
   }
+}
+
+/* Live parts over a wall object's art, same frame (WallFaces.tsx). */
+.item-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--ink);
+  pointer-events: none;
+}
+
+/* The clock's hands keep real time: each starts part-way through its turn. */
+.clock-hand {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: clock-turn linear infinite;
+}
+
+.clock-hour {
+  animation-duration: 43200s;
+  animation-delay: var(--clock-hour);
+}
+
+.clock-minute {
+  animation-duration: 3600s;
+  animation-delay: var(--clock-minute);
+}
+
+/* ticks once a second, like a real one */
+.clock-second {
+  animation-duration: 60s;
+  animation-delay: var(--clock-second);
+  animation-timing-function: steps(60, end);
+}
+
+.clock-pin {
+  fill: var(--paper);
+}
+
+@keyframes clock-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.calendar-month {
+  font: 400 34px var(--serif);
+  letter-spacing: -0.01em;
+}
+
+.calendar-weekday {
+  font: 600 10.5px var(--sans);
+  letter-spacing: 0.08em;
+}
+
+.calendar-day {
+  font: 500 11px var(--sans);
+}
+
+.calendar-grid {
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+
+/* today, circled in marker */
+.calendar-today {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .item .item-color {
@@ -445,6 +517,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* the hour and minute hands creep too slowly to notice; the ticking second hand goes */
+  .clock-second {
+    display: none;
+  }
+
   .tour-panel {
     animation-delay: 0s;
     animation-duration: 1ms;

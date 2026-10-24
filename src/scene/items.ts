@@ -7,6 +7,9 @@ import type { ChapterId } from '../chapters'
  */
 export const LOOP = 2280
 
+/** The wall's lap: the desk's, since the wall moves with the desk (Scene.tsx). */
+export const WALL_LOOP = LOOP
+
 export type Item = {
   id: string
   /** Transparent PNG from public/art/: black ink, no white background. */
@@ -18,10 +21,15 @@ export type Item = {
   colorSrc?: string
   /** Fades in over `src` on hover (same frame), e.g. a poster's colour version. */
   hoverSrc?: string
+  /** Live parts drawn over `src` (WallFaces.tsx): the clock's hands, the calendar's month and dates. */
+  face?: 'clock' | 'calendar'
   alt: string
-  /** World x of the object's center, 0 – LOOP (just under LOOP sits left of the first view). */
+  /**
+   * World x of the object's center, 0 – LOOP (0 – WALL_LOOP for 'wall' things); just under
+   * the lap's end sits left of the first view.
+   */
   x: number
-  /** 'wall' things hang on the wall and drift with it, slower than the desk. */
+  /** 'wall' things hang on the wall and move with it (WALL_SPEED in Scene.tsx). */
   surface: 'desk' | 'wall'
   /** Object height in vh. */
   h: number
@@ -136,11 +144,12 @@ export const ITEMS: Item[] = [
     src: '/art/water-bottle.svg',
     alt: "Fia's water bottle",
     // back of the desk in the gap between the mat and the sewing machine;
-    // right of where the name ends on load (~1090px), so it doesn't cover the "y"
+    // right of where the name ends on load (~975px), so it doesn't cover the "y"; low enough
+    // that its cap stays under the clock
     x: 1150,
     surface: 'desk',
     h: 24,
-    y: 50,
+    y: 53,
   },
   {
     id: 'headphones',
@@ -161,12 +170,88 @@ export const ITEMS: Item[] = [
     src: '/art/f1-poster.svg',
     hoverSrc: '/art/f1-poster-color.svg',
     alt: 'A Formula 1 poster',
-    // on the wall right of the yarn basket, above the headphones; its top runs off the screen.
-    // Framed and matted, so it's taller than the print alone (the print is ~35vh).
-    x: 1995,
+    // on the wall ~95px right of the World Cup polaroid, over the yarn basket; just high enough
+    // that its bottom clears the basket, and its top runs off the screen. Framed and matted,
+    // so it's taller than the print alone (the print is ~35vh).
+    x: 1827,
     surface: 'wall',
     h: 40.8,
-    y: 33,
+    y: 30.5,
+  },
+  {
+    id: 'wall-clock',
+    src: '/art/wall-clock.svg',
+    alt: 'A wall clock showing the time',
+    face: 'clock',
+    // high on the wall (top ~2.6% from the top of the screen), ~145px right of the name's "y"
+    // on load and well above the water bottle
+    x: 1180,
+    surface: 'wall',
+    h: 15.4,
+    y: 18,
+  },
+  {
+    id: 'wall-calendar',
+    src: '/art/wall-calendar.svg',
+    alt: 'A wall calendar on this month, with today circled',
+    face: 'calendar',
+    // ~40px right of the clock, its top level with the clock's; its bottom stays just above
+    // the sewing machine's thread
+    x: 1337,
+    surface: 'wall',
+    h: 22,
+    y: 24.5,
+  },
+  // Polaroids of Fia's photos, each a little crooked and at its own height; ink at rest, their
+  // colour on hover. One between the calendar and the F1 poster (~90px from each). The other
+  // three share the ~320px of wall between the poster and the end of the lap (over the
+  // headphones), so they overlap a little, taped up as a cluster.
+  {
+    id: 'polaroid-world-cup',
+    src: '/art/polaroid-world-cup.webp',
+    hoverSrc: '/art/polaroid-world-cup-color.webp',
+    alt: 'A polaroid from a rainy World Cup match, two people in ponchos in the stands',
+    // ~90px right of the calendar, its bottom just above the sewing machine's spool
+    x: 1542,
+    surface: 'wall',
+    h: 18,
+    y: 22,
+    rotate: -5,
+  },
+  {
+    id: 'polaroid-rome',
+    src: '/art/polaroid-rome.webp',
+    hoverSrc: '/art/polaroid-rome-color.webp',
+    alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
+    x: 2033,
+    surface: 'wall',
+    h: 18,
+    y: 26,
+    rotate: 4,
+  },
+  {
+    id: 'polaroid-party',
+    src: '/art/polaroid-party.webp',
+    hoverSrc: '/art/polaroid-party-color.webp',
+    alt: 'A polaroid of a group hug at a party',
+    x: 2128,
+    surface: 'wall',
+    h: 18,
+    y: 35,
+    rotate: -4,
+  },
+  {
+    id: 'polaroid-race',
+    src: '/art/polaroid-race.webp',
+    hoverSrc: '/art/polaroid-race-color.webp',
+    alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
+    // ends ~14px before the lap does (and ~24px before the next books), so on load the
+    // previous lap's copy is just off-screen left
+    x: 2208,
+    surface: 'wall',
+    h: 18,
+    y: 21,
+    rotate: 5,
   },
   {
     id: 'eraser',
@@ -206,11 +291,12 @@ export const ITEMS: Item[] = [
     alt: 'A sewing machine',
     // back right, where the books used to be, ~34px past the water bottle; the right edge of
     // the screen cuts it on most laptops. Real-machine scale (~45cm wide next to the ~21cm
-    // notebook), set back on the desk.
+    // notebook). Brought forward enough to clear the wall above it for the clock, calendar
+    // and polaroids; the front of its base now sits just behind the paper pad.
     x: 1420,
     surface: 'desk',
     h: 49.3,
-    y: 69,
+    y: 73,
   },
   {
     id: 'yarn-basket',

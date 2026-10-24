@@ -1,0 +1,32 @@
+/* Phones: the puppy and one centred note on the paper, instead of the desk. */
+.phone-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 100dvh;
+  padding: max(32px, env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right))
+    max(32px, env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+  text-align: center;
+}
+
+/* Smaller when the phone is on its side, so everything still fits. */
+.phone-note-pup {
+  height: min(128px, 30vh);
+  width: auto;
+  margin-bottom: 6px;
+  user-select: none;
+}
+
+.phone-note-name {
+  margin: 0;
+  font: 400 52px/1 var(--serif);
+  letter-spacing: -0.02em;
+}
+
+.phone-note-text {
+  max-width: 28ch;
+  margin: 0;
+  text-wrap: balance;
+}

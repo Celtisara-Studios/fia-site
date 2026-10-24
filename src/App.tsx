@@ -4,9 +4,11 @@ import { CHAPTERS, isChapterId, type ChapterId } from './chapters'
 import type { Point } from './fx/ink'
 import { hideFlood, inkIn, inkOut } from './fx/transitions'
 import { Loader } from './Loader'
+import { PhoneNote } from './PhoneNote'
 import { BookList } from './popups/BookList'
 import type { Item } from './scene/items'
 import { Scene } from './scene/Scene'
+import { usePhone } from './usePhone'
 
 const chapterFromHash = (): ChapterId | null => {
   const id = window.location.hash.slice(1)
@@ -35,6 +37,7 @@ export default function App() {
   const [open, setOpen] = useState<ChapterId | null>(chapterFromHash)
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState(false)
+  const phone = usePhone()
   const openRef = useRef(open)
   const flood = useRef<HTMLDivElement>(null)
   const busy = useRef(false)
@@ -114,6 +117,9 @@ export default function App() {
       window.removeEventListener('keydown', onKey)
     }
   }, [runOpen, runClose, requestClose])
+
+  // The desk is made for a bigger screen; phones get a note instead.
+  if (phone) return <PhoneNote />
 
   const Chapter = open ? CHAPTERS[open] : null
 

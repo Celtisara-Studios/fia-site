@@ -3,19 +3,20 @@ import gsap from 'gsap'
 import { CHAPTERS } from '../chapters'
 import { colorize, type Point } from '../fx/ink'
 import { beamPaths, REST_AIM, turnToward, type Aim } from './beam'
-import { ITEMS, LOOP, SURFACE_Y, type Item } from './items'
+import { ITEMS, LOOP, SURFACE_Y, WALL_LOOP, type Item } from './items'
 import { LAMP_BASE, LAMP_FRAME, LAMP_HEAD } from './lamp'
 import { LampLight } from './LampLight'
 import { StickyNote } from './StickyNote'
 import { TOUR, type TourStop } from './tour'
 import { useInfinitePan, wrap } from './useInfinitePan'
+import { CalendarPage, ClockHands } from './WallFaces'
 import './scene.css'
 
 /** Every layer is drawn for the previous, current and next lap so the wrap is seamless. */
 const COPIES = [-1, 0, 1] as const
-const WALL_SPEED = 0.6
-/** The wall drifts at 3/5 of the desk's speed, so the two line up again every 5 laps. */
-const HOME_LAPS = 5
+/** The wall moves with the desk, as one room: what hangs on it always sits over the same spot. */
+const WALL_SPEED = 1
+const HOME_LAPS = 1
 const GRID = 10
 /** Horizontal repeat of the rail's 45° crosshatch (5px apart, see .scene-rail). */
 const RAIL_HATCH = 5 * Math.SQRT2
@@ -104,6 +105,7 @@ export function Scene({ active, onOpen, onBooks }: Props) {
   const settling = useRef<(() => void) | null>(null)
   const scale = useWorldScale()
   const loop = LOOP * scale
+  const wallLoop = WALL_LOOP * scale
 
   const pan = useInfinitePan(root, loop, active && tour === null, (v) => {
     const w = v * WALL_SPEED
@@ -115,7 +117,7 @@ export function Scene({ active, onOpen, onBooks }: Props) {
     if (shade.current) {
       for (const g of shade.current.querySelectorAll('.lamp-pan')) g.setAttribute('transform', `translate(${-x} 0)`)
     }
-    if (wall.current) wall.current.style.transform = `translate3d(${-wrap(w, loop)}px,0,0)`
+    if (wall.current) wall.current.style.transform = `translate3d(${-wrap(w, wallLoop)}px,0,0)`
     if (grid.current) grid.current.style.backgroundPositionX = `${-wrap(w, GRID)}px`
   })
 
@@ -314,19 +316,19 @@ export function Scene({ active, onOpen, onBooks }: Props) {
         {COPIES.map((c) => {
           const Name = c === 0 ? 'h1' : 'p'
           return (
-            <Name key={c} className="wall-name" data-id="name" style={{ left: c * loop }} aria-hidden={c !== 0 || undefined}>
+            <Name key={c} className="wall-name" data-id="name" style={{ left: c * wallLoop }} aria-hidden={c !== 0 || undefined}>
               Fia Bondy
             </Name>
           )
         })}
-        {/* things hanging on the wall drift with it */}
+        {/* things hanging on the wall move with it */}
         {COPIES.map((c) =>
           WALL_ITEMS.map((item) => (
             <DeskItem
               key={`${c}:${item.id}`}
               item={item}
               scale={scale}
-              offset={c * loop}
+              offset={c * wallLoop}
               primary={c === 0}
               lit={lit}
               onOpen={onOpen}
@@ -571,6 +573,8 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
         <span className="item-art">
           <img src={item.src} alt={primary ? item.alt : ''} draggable={false} />
           {item.hoverSrc && <img className="item-reveal" src={item.hoverSrc} alt="" draggable={false} />}
+          {item.face === 'clock' && <ClockHands />}
+          {item.face === 'calendar' && <CalendarPage />}
         </span>
       </div>
     )
