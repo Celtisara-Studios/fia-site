@@ -1,6 +1,6 @@
 /**
  * The lamp's tour: where its light lands, in order, and what the floating panel beside
- * each stop says. The words are placeholders in the handwriting font until Fia writes her own.
+ * each stop says. The words are placeholders until Fia writes her own.
  */
 export type TourStop = {
   /** data-id of what the light lands on (an object, or the name on the wall). */
@@ -18,22 +18,29 @@ export type TourStop = {
   fit?: [number, number]
 }
 
+/** Her name, then the three things on the desk that open: Writing, Visual Art, Fashion. */
 export const TOUR: TourStop[] = [
   {
     target: 'name',
-    title: 'hi, I’m Fia!',
-    line: 'welcome to my desk. everything on it is something I made or love.',
+    title: 'Hi, I’m Fia!',
+    line: 'Welcome to my desk. Everything on it is something I made or love.',
     side: 'right',
     fit: [1.12, 1.6],
   },
   {
     target: 'notebook',
-    line: 'click around the desk. start with my poems!',
+    line: 'Start with my writing: open the notebook to read my poem.',
     side: 'below',
   },
   {
     target: 'cutting-mat',
-    line: 'and my art lives here',
+    line: 'My visual art lives on the cutting mat.',
     side: 'below',
+  },
+  {
+    // past the right edge at the start on most screens, so the desk pans to bring it in
+    target: 'sewing-machine',
+    line: 'And the sewing machine has the things I’ve made to wear.',
+    side: 'left',
   },
 ]

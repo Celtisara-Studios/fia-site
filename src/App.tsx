@@ -7,6 +7,7 @@ import { Loader } from './Loader'
 import { PhoneNote } from './PhoneNote'
 import { BookList } from './popups/BookList'
 import { Gallery } from './popups/Gallery'
+import { Lookbook } from './popups/Lookbook'
 import { PhotoViewer } from './popups/PhotoViewer'
 import type { Item } from './scene/items'
 import { Scene } from './scene/Scene'
@@ -45,6 +46,7 @@ export default function App() {
   /** The polaroid the photo viewer opened at, while it's open. */
   const [photo, setPhoto] = useState<string | null>(null)
   const [gallery, setGallery] = useState(false)
+  const [fashion, setFashion] = useState(false)
   const phone = usePhone()
   const openRef = useRef(open)
   const flood = useRef<HTMLDivElement>(null)
@@ -155,11 +157,12 @@ export default function App() {
   return (
     <>
       <Scene
-        active={open === null && !books && !photo && !gallery}
+        active={open === null && !books && !photo && !gallery && !fashion}
         onOpen={openItem}
         onBooks={() => setBooks(true)}
         onPhoto={setPhoto}
         onGallery={() => setGallery(true)}
+        onFashion={() => setFashion(true)}
       />
       {Chapter && <Chapter.Component color={Chapter.color} onClose={requestClose} />}
       {books && (
@@ -168,6 +171,15 @@ export default function App() {
             setBooks(false)
             // back to the book stack, for keyboard users
             document.querySelector<HTMLElement>('.item[data-action="books"]:not([aria-hidden])')?.focus({ preventScroll: true })
+          }}
+        />
+      )}
+      {fashion && (
+        <Lookbook
+          onClose={() => {
+            setFashion(false)
+            // back to the sewing machine, for keyboard users
+            document.querySelector<HTMLElement>('.item[data-action="fashion"]:not([aria-hidden])')?.focus({ preventScroll: true })
           }}
         />
       )}

@@ -11,10 +11,10 @@ export const LOOP = 2394
 export const WALL_SPEED = 0.85
 
 /**
- * The wall's own lap (~2584px): 4 desk laps of its travel, split into 3. So it lines up with
- * the desk again every 4 laps (HOME_LAPS in Scene.tsx), with a little more room than the desk.
+ * The wall's own lap (~3050px): 3 desk laps of its travel, split into 2. So it lines up with
+ * the desk again every 3 laps (HOME_LAPS in Scene.tsx), with room for all the polaroids.
  */
-export const WALL_LOOP = (LOOP * WALL_SPEED * 4) / 3
+export const WALL_LOOP = (LOOP * WALL_SPEED * 3) / 2
 
 export type Item = {
   id: string
@@ -45,9 +45,9 @@ export type Item = {
   chapter?: ChapterId
   /**
    * 'lamp' switches the lamp on and off; 'books' opens the reading list; 'photos' opens the
-   * photo viewer here; 'gallery' opens Fia's visual art.
+   * photo viewer here; 'gallery' opens Fia's visual art; 'fashion' what she's made to wear.
    */
-  action?: 'lamp' | 'books' | 'photos' | 'gallery'
+  action?: 'lamp' | 'books' | 'photos' | 'gallery' | 'fashion'
   /**
    * Prints of her art lying on a flat object (the mat), ink at rest and their colour on hover.
    * `x`, `y` are each print's centre and `h` its height, in % of the object's top surface;
@@ -251,8 +251,8 @@ export const ITEMS: Item[] = [
   },
   // Polaroids of Fia's photos, each a little crooked and at its own height; ink at rest, their
   // colour on hover, and a click holds any of them up close in the photo viewer, which goes
-  // round all four. One between the calendar and the F1 poster (~90px from each); the other
-  // three scattered past the poster ~70px apart, up to the end of the wall's lap.
+  // round all of them. One between the calendar and the F1 poster (~90px from each); the
+  // other four scattered past the poster ~115px apart, up to the end of the wall's lap.
   {
     id: 'polaroid-world-cup',
     src: '/art/polaroid-world-cup.webp',
@@ -274,11 +274,24 @@ export const ITEMS: Item[] = [
     photo: '/art/polaroid-rome-large.webp',
     action: 'photos',
     alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
-    x: 2191,
+    x: 2222,
     surface: 'wall',
     h: 18,
     y: 26,
     rotate: 4,
+  },
+  {
+    id: 'polaroid-map',
+    src: '/art/polaroid-map.webp',
+    hoverSrc: '/art/polaroid-map-color.webp',
+    photo: '/art/polaroid-map-large.webp',
+    action: 'photos',
+    alt: 'A polaroid of five people in front of a huge painted map of Italy in a gilded museum gallery',
+    x: 2452,
+    surface: 'wall',
+    h: 18,
+    y: 33,
+    rotate: -3,
   },
   {
     id: 'polaroid-party',
@@ -287,11 +300,11 @@ export const ITEMS: Item[] = [
     photo: '/art/polaroid-party-large.webp',
     action: 'photos',
     alt: 'A polaroid of a group hug at a party',
-    x: 2387,
+    x: 2682,
     surface: 'wall',
     h: 18,
-    y: 34,
-    rotate: -3,
+    y: 22,
+    rotate: 2,
   },
   {
     id: 'polaroid-race',
@@ -300,22 +313,12 @@ export const ITEMS: Item[] = [
     photo: '/art/polaroid-race-large.webp',
     action: 'photos',
     alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
-    // ends ~67px before the wall's lap does, so on load the previous lap's copy is off-screen left
-    x: 2582,
+    // ends ~80px before the wall's lap does, so on load the previous lap's copy is off-screen left
+    x: 2912,
     surface: 'wall',
     h: 18,
-    y: 21,
-    rotate: 3,
-  },
-  {
-    id: 'eraser',
-    src: '/art/eraser.svg',
-    alt: 'An eraser',
-    // just off the mat's top-left corner, between the puppy and the notebook
-    x: 593,
-    surface: 'desk',
-    h: 6.5,
-    y: 51.5,
+    y: 30,
+    rotate: -2,
   },
   {
     id: 'paper-pad',
@@ -350,6 +353,8 @@ export const ITEMS: Item[] = [
     // and polaroids; the front of its base now sits just behind the paper pad.
     // Its label is tucked just under the front edge of the base, which slopes up to the right,
     // so it sits left of centre where the base comes lowest; clear of the paper pad.
+    // Opens what she's made to wear.
+    action: 'fashion',
     label: 'Fashion',
     labelSrc: '/art/label-fashion.svg',
     labelAt: { x: 42, y: 97.5 },

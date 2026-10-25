@@ -128,6 +128,31 @@
   cursor: var(--cursor-point);
 }
 
+/*
+ * Reaching for the head (with the lamp off) gives it a little shake on its joint, quick
+ * then settling, like a real lamp head nudged. It turns around the same pivot as aiming.
+ */
+@media (hover: hover) {
+  .scene:not(.is-lit) .lamp-head:hover {
+    animation: lamp-nudge 0.75s var(--ease-out);
+  }
+}
+
+@keyframes lamp-nudge {
+  15% {
+    transform: rotate(-2.6deg);
+  }
+  35% {
+    transform: rotate(1.9deg);
+  }
+  55% {
+    transform: rotate(-1.1deg);
+  }
+  75% {
+    transform: rotate(0.5deg);
+  }
+}
+
 .item .lamp-head img {
   width: 100%;
 }
@@ -298,9 +323,9 @@
 
 
 @media (hover: hover) {
-  /* Anything that opens (a chapter, the reading list, a link) turns slightly on hover. */
+  /* Anything that opens (a chapter, the reading list, a link) turns just slightly on hover. */
   .item.opens:hover .item-art {
-    transform: rotate(3deg);
+    transform: rotate(1deg);
   }
 
   /* except something lying flat (the mat): its prints turn a little and colour instead */
@@ -308,13 +333,13 @@
     transform: none;
   }
 
-  /* each turns a little, every other one the other way */
+  /* each turns a touch, every other one the other way */
   .item.opens:hover .print {
-    rotate: calc(var(--turn) + 1.5deg);
+    rotate: calc(var(--turn) + 1deg);
   }
 
   .item.opens:hover .print:nth-child(even) {
-    rotate: calc(var(--turn) - 1.5deg);
+    rotate: calc(var(--turn) - 1deg);
   }
 
   .item.opens:hover .print-color {
@@ -525,25 +550,23 @@
   animation: panel-float 0.5s var(--ease-out) 0.75s both;
 }
 
+/* The panel's words in the site's type: the welcome in the serif, the rest in the sans. */
 .tour-title,
 .tour-text {
   margin: 0;
   /* clear of the close button */
   padding-right: 22px;
-  font-family: var(--hand);
-  font-weight: 600;
   text-wrap: balance;
 }
 
 .tour-title {
-  margin-bottom: 4px;
-  font-size: clamp(24px, 3.8vh, 40px);
-  line-height: 1;
+  margin-bottom: 6px;
+  font: 400 clamp(26px, 3.6vh, 38px) / 1 var(--serif);
+  letter-spacing: -0.01em;
 }
 
 .tour-text {
-  font-size: clamp(17px, 2.8vh, 30px);
-  line-height: 1.05;
+  font: 400 clamp(14px, 1.9vh, 17px) / 1.45 var(--sans);
 }
 
 .tour-close {
@@ -635,6 +658,10 @@
   /* the hour and minute hands creep too slowly to notice; the ticking second hand goes */
   .clock-second {
     display: none;
+  }
+
+  .scene:not(.is-lit) .lamp-head:hover {
+    animation: none;
   }
 
   /* the label's circle just appears */

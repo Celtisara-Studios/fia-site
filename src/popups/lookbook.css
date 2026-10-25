@@ -1,0 +1,168 @@
+/*
+ * What Fia has made to wear (Lookbook.tsx): a paper card cut like a sewing pattern (a dashed
+ * cutting line inside its edge) with her looks on wooden hangers along a clothes rail, each
+ * named underneath. --lw is the card's inside width; the looks share it so they hang the
+ * same height.
+ */
+.lookbook {
+  --lw: min(820px, calc(100vw - 2 * var(--gutter) - 56px), calc((100svh - 2 * var(--gutter) - 250px) * 2.03 + 56px));
+  position: relative;
+  width: calc(var(--lw) + 56px);
+  max-height: calc(100svh - var(--gutter) * 2);
+  padding: 20px 28px 24px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  animation: popup-rise 0.4s var(--ease-out) both;
+}
+
+/* the pattern's cutting line */
+.lookbook::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1.5px dashed color-mix(in srgb, var(--ink) 35%, var(--paper));
+  pointer-events: none;
+}
+
+.popup.is-leaving .lookbook {
+  animation: popup-sink 0.22s var(--ease-paper) both;
+}
+
+.lookbook-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  margin-bottom: 8px;
+}
+
+.lookbook-title {
+  margin: 0 auto 0 0;
+  line-height: 0;
+}
+
+.lookbook-title img {
+  height: 44px;
+  width: auto;
+}
+
+.lookbook-btn {
+  height: 36px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.lookbook-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* The rail: an ink rod the hangers hook over, the looks sharing its width by their shape. */
+.rail {
+  position: relative;
+  display: flex;
+  gap: 28px;
+  padding: 0 6px;
+}
+
+.rail::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: -10px;
+  right: -10px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+
+.look {
+  flex: var(--ratio) 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+/*
+ * The hanger keeps its own shape (200 × 60): its hook's top on the rod, and the frame tucked
+ * up behind the ends of its shoulders, so the look hangs from them.
+ */
+.hanger {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 80%;
+  max-width: 250px;
+  height: auto;
+  aspect-ratio: 200 / 60;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.hanger-hook {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hanger-wood {
+  fill: var(--ink);
+}
+
+/* the light along the top of the wood */
+.hanger-shine {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+
+.look-frame {
+  display: block;
+  margin-top: -3.2%;
+  padding: 6px;
+  background: #fbf9f4;
+  border: 1.5px solid var(--ink);
+}
+
+.look-frame img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  object-fit: cover;
+}
+
+/* Its name underneath: the look's number, then its title. */
+.look-caption {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.look-no {
+  font: 500 10px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.look-name {
+  font: 400 18px/1.1 var(--serif);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lookbook,
+  .popup.is-leaving .lookbook {
+    animation-duration: 1ms;
+  }
+}

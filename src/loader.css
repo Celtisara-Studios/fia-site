@@ -1,8 +1,10 @@
 .loader {
-  --p: 0; /* drawing progress, 0–1, set by Loader.tsx */
+  --p: 0; /* loading progress, 0–1, set by Loader.tsx */
   position: fixed;
   inset: 0;
   z-index: 50;
+  display: grid;
+  place-items: center;
   background: var(--paper);
   transition: opacity 0.4s var(--ease-paper);
 }
@@ -12,46 +14,57 @@
   pointer-events: none;
 }
 
-/* Everything drawn so far: clipped at the pencil's tip. */
-.loader-drawn {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0);
+/* The husky, her signature under it, and the bar under that, centred on the paper. */
+.loader-card {
+  display: grid;
+  justify-items: center;
 }
 
-/* The desk's pencil, tip down on the rail, leaning back like it's being held.
-   The tip sits at the box's top-right corner (pencil.svg ≈ 754, 3), so the
-   translate puts the tip on the anchor point and the turn pivots around it. */
-.loader-pencil {
-  position: absolute;
-  left: calc(var(--p) * 100%);
-  /* middle of the rail band, which slopes slightly down to the right */
-  top: calc(39.5% + var(--p) * 0.62%);
-  height: 10vh;
+.loader-pup {
+  height: clamp(110px, 20vh, 190px);
   width: auto;
-  transform-origin: 99.86% 0.6%;
-  translate: -99.86% -0.6%;
-  rotate: 154deg;
-  pointer-events: none;
+  user-select: none;
+  /* a little bob while it waits */
+  animation: pup-bob 1.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.loader-sign {
+  height: clamp(44px, 7.5vh, 72px);
+  width: auto;
+  margin-top: clamp(10px, 2vh, 18px);
   user-select: none;
 }
 
-/* Sits on the dark front edge, where the desk's hint will be. */
-.loader-caption {
-  position: absolute;
-  inset: var(--front) 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0;
-  padding: 0 var(--gutter) env(safe-area-inset-bottom);
-  color: var(--paper);
-  font: 500 11px/1.2 var(--sans);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
+/* A thin ink bar on a faint track, filling left to right. */
+.loader-bar {
+  position: relative;
+  width: clamp(140px, 22vh, 210px);
+  height: 3px;
+  margin-top: clamp(14px, 2.6vh, 24px);
+  overflow: hidden;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--ink) 15%, var(--paper));
 }
 
-.loader-count {
-  font-variant-numeric: tabular-nums;
+.loader-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(var(--p));
+  transform-origin: left;
+}
+
+@keyframes pup-bob {
+  50% {
+    translate: 0 -4px;
+    rotate: -1.5deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-pup {
+    animation: none;
+  }
 }

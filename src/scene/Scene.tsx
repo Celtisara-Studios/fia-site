@@ -16,7 +16,7 @@ import './scene.css'
 /** Every layer is drawn for the previous, current and next lap so the wrap is seamless. */
 const COPIES = [-1, 0, 1] as const
 /** Desk laps until the wall lines up with the desk again (see WALL_LOOP). */
-const HOME_LAPS = 4
+const HOME_LAPS = 3
 const GRID = 10
 /** Horizontal repeat of the rail's 45° crosshatch (5px apart, see .scene-rail). */
 const RAIL_HATCH = 5 * Math.SQRT2
@@ -104,9 +104,11 @@ type Props = {
   onPhoto: (id: string) => void
   /** The cutting mat was clicked: open her visual art. */
   onGallery: () => void
+  /** The sewing machine was clicked: open what she's made to wear. */
+  onFashion: () => void
 }
 
-export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
+export function Scene({ active, onOpen, onBooks, onPhoto, onGallery, onFashion }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const world = useRef<HTMLDivElement>(null)
   const wall = useRef<HTMLDivElement>(null)
@@ -203,22 +205,43 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
     return { to, box }
   }, [])
 
-  /** Show a stop: swing the light onto it, with the panel beside it. */
-  const showStop = useCallback(
-    (i: number, instant?: boolean) => {
-      setTour(i)
-      const hit = aimAt(TOUR[i])
-      if (!hit) return setLitBox(null)
-      swingTo(hit.to, instant)
-      setLitBox(hit.box)
-    },
-    [aimAt, swingTo],
-  )
-
   const stopSettling = useCallback(() => {
     if (settling.current) gsap.ticker.remove(settling.current)
     settling.current = null
   }, [])
+
+  /** How far past home to pan so a stop's object is wholly on screen: none if it fits there. */
+  const stopShift = useCallback((stop: TourStop) => {
+    const el = root.current?.querySelector<HTMLElement>(`.item[data-id="${stop.target}"]:not([aria-hidden])`)
+    if (!el) return 0
+    // its right edge, at home (the layer's own coordinates are the screen's there)
+    const right = el.offsetLeft + el.offsetWidth / 2
+    return Math.max(0, right + window.innerWidth * 0.04 - window.innerWidth)
+  }, [])
+
+  /**
+   * Show a stop: pan so it's on screen (home, wall and all, when it fits there), then once
+   * the desk has got there, swing the light onto it with the panel beside it.
+   */
+  const showStop = useCallback(
+    (i: number, instant?: boolean) => {
+      stopSettling()
+      setTour(i)
+      setLitBox(null)
+      pan.panTo(stopShift(TOUR[i]), HOME_LAPS)
+      const arrive = () => {
+        if (!pan.settled()) return
+        stopSettling()
+        const hit = aimAt(TOUR[i])
+        if (!hit) return
+        swingTo(hit.to, instant)
+        setLitBox(hit.box)
+      }
+      settling.current = arrive
+      gsap.ticker.add(arrive)
+    },
+    [aimAt, swingTo, stopSettling, stopShift, pan],
+  )
 
   /**
    * The light goes out: the bulb stutters a few times, uneven like a real one, then
@@ -277,17 +300,8 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
     setLit(true)
     if (toured) return
     setToured(true)
-    setTour(0)
-    // Back to where the desk starts, wall and all, so every stop is on screen. The
-    // first stop is aimed once the pan has got there.
-    pan.panTo(0, HOME_LAPS)
-    const arrive = () => {
-      if (!pan.settled()) return
-      stopSettling()
-      showStop(0)
-    }
-    settling.current = arrive
-    gsap.ticker.add(arrive)
+    // back to where the desk starts, wall and all, for the first stop
+    showStop(0)
   }
 
   // During the tour: Esc ends it, and a resize re-aims the stop.
@@ -360,6 +374,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
               onBooks={onBooks}
               onPhoto={onPhoto}
               onGallery={onGallery}
+              onFashion={onFashion}
               // the wall moves slower than the desk and comes round on its own lap
               onFocus={() => pan.panTo((item.x * scale - window.innerWidth / 2) / WALL_SPEED, 1, wallLoop / WALL_SPEED)}
             />
@@ -382,6 +397,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
               onBooks={onBooks}
               onPhoto={onPhoto}
               onGallery={onGallery}
+              onFashion={onFashion}
               onFocus={() => pan.panTo(item.x * scale - window.innerWidth / 2)}
             />
           )),
@@ -503,10 +519,11 @@ type ItemProps = {
   onBooks: () => void
   onPhoto: (id: string) => void
   onGallery: () => void
+  onFashion: () => void
   onFocus: () => void
 }
 
-function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onGallery, onFocus }: ItemProps) {
+function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onGallery, onFashion, onFocus }: ItemProps) {
   const color = item.chapter ? CHAPTERS[item.chapter].color : null
   const [colorSrc, setColorSrc] = useState<string | null>(null)
   /** The hand-lettered label's width over its height, once it's loaded. */
@@ -567,9 +584,9 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
     )
   }
 
-  // The reading list, a polaroid held up close, or her visual art: popups over the desk.
-  if (item.action === 'books' || item.action === 'photos' || item.action === 'gallery') {
-    const open = { books: onBooks, photos: () => onPhoto(item.id), gallery: onGallery }[item.action]
+  // The reading list, a polaroid held up close, her visual art, or her fashion: popups over the desk.
+  if (item.action === 'books' || item.action === 'photos' || item.action === 'gallery' || item.action === 'fashion') {
+    const open = { books: onBooks, photos: () => onPhoto(item.id), gallery: onGallery, fashion: onFashion }[item.action]
     return (
       <button
         type="button"
