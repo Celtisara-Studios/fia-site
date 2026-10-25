@@ -3,9 +3,9 @@ import type { ChapterId } from '../chapters'
 /**
  * Width of one lap of the desk in world px (see DESIGN_HEIGHT in Scene.tsx); everything repeats after this.
  * Just long enough for the objects, so panning never crosses bare desk: the headphones at the end
- * of a lap sit ~60px left of the next lap's laptop.
+ * of a lap sit ~80px left of the next lap's laptop.
  */
-export const LOOP = 2280
+export const LOOP = 2394
 
 /** How fast the wall moves against the desk: a little slower, so it reads as a step further back. */
 export const WALL_SPEED = 0.85
@@ -54,8 +54,15 @@ export type Item = {
   /** Turn on the desk in degrees, clockwise, around the object's center. */
   rotate?: number
   label?: string
+  /** Fia's hand-lettering of the label, shown instead of the text (which stays for screen readers). */
+  labelSrc?: string
   /** Put the label above the object (when something sits just below it). */
   labelAbove?: boolean
+  /**
+   * Move the label to hug an odd shape: `x` is where its centre goes across the drawing,
+   * `y` where its top goes down it, both in % of the drawing from its top left.
+   */
+  labelAt?: { x?: number; y?: number }
 }
 
 export const SURFACE_Y: Record<Item['surface'], number> = { desk: 73.6, wall: 34 }
@@ -74,7 +81,7 @@ export const ITEMS: Item[] = [
     src: '/art/lamp.svg',
     alt: 'An adjustable desk lamp',
     // Right of the books, left of the name on load; the name's left margin in scene.css clears it.
-    x: 351,
+    x: 369,
     action: 'lamp',
     surface: 'desk',
     h: 40.3,
@@ -85,7 +92,7 @@ export const ITEMS: Item[] = [
     src: '/art/puppy.svg',
     alt: 'A husky puppy figure',
     // at the back of the desk, right of the lamp
-    x: 465,
+    x: 488,
     surface: 'desk',
     h: 15.9,
     y: 47.8,
@@ -95,7 +102,7 @@ export const ITEMS: Item[] = [
     src: '/art/pencil.svg',
     alt: 'A pencil',
     // left of the notebook, turned to stand more upright
-    x: 337,
+    x: 354,
     surface: 'desk',
     h: 10,
     y: 68.4,
@@ -106,18 +113,23 @@ export const ITEMS: Item[] = [
     id: 'notebook',
     src: '/art/sketchbook.png',
     alt: 'A notebook with a ribbon bookmark',
-    x: 457,
+    x: 480,
     surface: 'desk',
     h: 20.6,
     y: 73.5,
     chapter: 'writing',
     label: 'Writing',
+    labelSrc: '/art/label-writing.svg',
   },
   {
     id: 'cutting-mat',
     src: '/art/cutting-mat.svg',
     alt: 'A cutting mat',
-    x: 823,
+    // the label sits close under the mat's front edge, clear of the desk's
+    label: 'Visual Art',
+    labelSrc: '/art/label-visual-art.svg',
+    labelAt: { y: 102 },
+    x: 864,
     surface: 'desk',
     h: 34.9,
     y: 80.6,
@@ -129,9 +141,10 @@ export const ITEMS: Item[] = [
     alt: 'A stack of books',
     // back left, rising in front of the wall: fully in frame on load, ~19px clear of the lamp's elbow
     action: 'books',
-    label: 'Books',
+    label: 'Reading',
+    labelSrc: '/art/label-reading.svg',
     labelAbove: true, // the laptop's lid is right below the stack
-    x: 120,
+    x: 126,
     surface: 'desk',
     h: 36.7,
     y: 57,
@@ -142,7 +155,7 @@ export const ITEMS: Item[] = [
     alt: 'A closed laptop',
     // front left, in front of the books; the left edge of the screen cuts it on load (a bit
     // over half shows) and its right corner stays ~14px clear of the pencil
-    x: 30,
+    x: 32,
     surface: 'desk',
     h: 31.6,
     y: 85.2,
@@ -152,9 +165,9 @@ export const ITEMS: Item[] = [
     src: '/art/water-bottle.svg',
     alt: "Fia's water bottle",
     // back of the desk in the gap between the mat and the sewing machine;
-    // right of where the name ends on load (~975px), so it doesn't cover the "y"; low enough
+    // right of where the name ends on load (~1000px), so it doesn't cover the "y"; low enough
     // that its cap stays under the clock
-    x: 1150,
+    x: 1208,
     surface: 'desk',
     h: 24,
     y: 53,
@@ -166,9 +179,11 @@ export const ITEMS: Item[] = [
     // down at the front, their top-left corner just over the yarn basket's bottom-right;
     // just past the right edge on load: found by panning
     href: 'https://open.spotify.com/playlist/3G8By3kXTjUQSF3y3BYsiy',
-    label: 'Playlist',
+    label: 'Music',
+    labelSrc: '/art/label-music.svg',
     labelAbove: true, // below them is the desk's front edge
-    x: 1880,
+    labelAt: { x: 60 }, // over the headband, clear of the yarn basket
+    x: 1974,
     surface: 'desk',
     h: 26.8,
     y: 85,
@@ -181,7 +196,7 @@ export const ITEMS: Item[] = [
     // on the wall ~95px right of the World Cup polaroid, over the yarn basket; just high enough
     // that its bottom clears the basket, and its top runs off the screen. Framed and matted,
     // so it's taller than the print alone (the print is ~35vh).
-    x: 1827,
+    x: 1918,
     surface: 'wall',
     h: 40.8,
     y: 30.5,
@@ -193,7 +208,7 @@ export const ITEMS: Item[] = [
     face: 'clock',
     // high on the wall (top ~2.6% from the top of the screen), ~145px right of the name's "y"
     // on load and well above the water bottle
-    x: 1180,
+    x: 1239,
     surface: 'wall',
     h: 15.4,
     y: 18,
@@ -205,7 +220,7 @@ export const ITEMS: Item[] = [
     face: 'calendar',
     // ~40px right of the clock, its top level with the clock's; its bottom stays just above
     // the sewing machine's thread
-    x: 1337,
+    x: 1404,
     surface: 'wall',
     h: 22,
     y: 24.5,
@@ -222,7 +237,7 @@ export const ITEMS: Item[] = [
     action: 'photos',
     alt: 'A polaroid from a rainy World Cup match, two people in ponchos in the stands',
     // ~90px right of the calendar, its bottom just above the sewing machine's spool
-    x: 1542,
+    x: 1619,
     surface: 'wall',
     h: 18,
     y: 22,
@@ -235,7 +250,7 @@ export const ITEMS: Item[] = [
     photo: '/art/polaroid-rome-large.webp',
     action: 'photos',
     alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
-    x: 2087,
+    x: 2191,
     surface: 'wall',
     h: 18,
     y: 26,
@@ -248,7 +263,7 @@ export const ITEMS: Item[] = [
     photo: '/art/polaroid-party-large.webp',
     action: 'photos',
     alt: 'A polaroid of a group hug at a party',
-    x: 2273,
+    x: 2387,
     surface: 'wall',
     h: 18,
     y: 34,
@@ -262,7 +277,7 @@ export const ITEMS: Item[] = [
     action: 'photos',
     alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
     // ends ~67px before the wall's lap does, so on load the previous lap's copy is off-screen left
-    x: 2459,
+    x: 2582,
     surface: 'wall',
     h: 18,
     y: 21,
@@ -273,7 +288,7 @@ export const ITEMS: Item[] = [
     src: '/art/eraser.svg',
     alt: 'An eraser',
     // just off the mat's top-left corner, between the puppy and the notebook
-    x: 565,
+    x: 593,
     surface: 'desk',
     h: 6.5,
     y: 51.5,
@@ -282,9 +297,9 @@ export const ITEMS: Item[] = [
     id: 'paper-pad',
     src: '/art/paper-pad.svg',
     alt: 'A clipped stack of paper',
-    // front of the desk right of the mat, just under the sewing machine's base (its top edge
-    // stops at the machine's bottom), filling the bare desk there
-    x: 1240,
+    // front of the desk right of the mat (~70px clear), under the left end of the sewing
+    // machine's base, ~80px left of the machine's label
+    x: 1255,
     surface: 'desk',
     h: 15,
     y: 84.5,
@@ -293,12 +308,13 @@ export const ITEMS: Item[] = [
     id: 'glasses',
     src: '/art/glasses.svg',
     alt: 'A pair of glasses',
-    // front of the desk, halfway between the paper pad and the headphones' cable; ~16px in
-    // front of the sewing machine's base
-    x: 1530,
+    // at the back of the desk in the bare stretch behind the headphones and the next lap's
+    // laptop: ~80px right of the headphones' label, ~130px left of the next books, and just
+    // clear of the laptop's far corner
+    x: 2200,
     surface: 'desk',
     h: 12,
-    y: 83,
+    y: 54,
   },
   {
     id: 'sewing-machine',
@@ -308,7 +324,12 @@ export const ITEMS: Item[] = [
     // the screen cuts it on most laptops. Real-machine scale (~45cm wide next to the ~21cm
     // notebook). Brought forward enough to clear the wall above it for the clock, calendar
     // and polaroids; the front of its base now sits just behind the paper pad.
-    x: 1420,
+    // Its label is tucked just under the front edge of the base, which slopes up to the right,
+    // so it sits left of centre where the base comes lowest; clear of the paper pad.
+    label: 'Fashion',
+    labelSrc: '/art/label-fashion.svg',
+    labelAt: { x: 42, y: 97.5 },
+    x: 1491,
     surface: 'desk',
     h: 49.3,
     y: 73,
@@ -320,7 +341,7 @@ export const ITEMS: Item[] = [
     // Right of the sewing machine, its left end tucked ~15px behind the machine's right end
     // (set further back, so it draws behind). The one deliberate overlap: the machine in
     // front is solid, with no see-through parts.
-    x: 1735,
+    x: 1807,
     surface: 'desk',
     h: 32,
     y: 63,

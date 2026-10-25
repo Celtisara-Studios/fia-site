@@ -30,7 +30,13 @@ export function Loader({ onDone }: { onDone: () => void }) {
     const el = root.current
     if (!el) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const srcs = [...new Set([...ITEMS.flatMap((i) => [i.src, i.colorSrc, i.hoverSrc].filter((s): s is string => !!s)), ...LAMP_PARTS])]
+    const srcs = [
+      ...new Set([
+        ...ITEMS.flatMap((i) => [i.src, i.colorSrc, i.hoverSrc, i.labelSrc].filter((s): s is string => !!s)),
+        ...LAMP_PARTS,
+        '/art/signature.svg', // under her name on the wall
+      ]),
+    ]
     const jobs = [
       document.fonts.load('400 100px "Instrument Serif"'),
       document.fonts.load('500 11px "Inter Tight"'),

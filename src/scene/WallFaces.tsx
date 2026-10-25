@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react'
+import { markerLoop } from '../fx/marker'
 
 /**
  * The live parts of the wall clock and calendar, drawn over their art (wall-clock.svg,
@@ -53,17 +54,6 @@ function thisMonth() {
     days: new Date(y, m + 1, 0).getDate(),
     today: now.getDate(),
   }
-}
-
-/** A quick marker loop around a date, going a little past closed. */
-function markerLoop(cx: number, cy: number, rx: number, ry: number) {
-  const pts = Array.from({ length: 41 }, (_, k) => {
-    const p = k / 40
-    const t = -0.5 + p * (2 * Math.PI + 0.9)
-    const grow = 1 + 0.08 * p
-    return `${(cx + rx * grow * Math.cos(t) + 0.6 * p).toFixed(1)},${(cy + ry * grow * Math.sin(t) - 1.2 * p).toFixed(1)}`
-  })
-  return `M${pts.join(' L')}`
 }
 
 /** This month's page, with today circled. Five or six weeks, squeezed into the same box. */

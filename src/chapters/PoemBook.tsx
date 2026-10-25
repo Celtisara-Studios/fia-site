@@ -62,7 +62,7 @@ function PoemPage({ index }: { index: number }) {
           ))}
         </p>
       ))}
-      {last && <p className="page-sign">{POEM.signature}</p>}
+      {last && <img className="page-sign" src="/art/signature.svg" alt={POEM.signature} draggable={false} />}
     </div>
   )
 }

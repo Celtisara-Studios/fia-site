@@ -224,12 +224,12 @@
   background: linear-gradient(transparent 58%, var(--highlight) 58% 90%, transparent 90%);
 }
 
+/* her signature, a blank line under the last stanza */
 .page-text .page-sign {
-  width: fit-content;
+  display: block;
+  height: calc(var(--lh) * 2.6);
+  width: auto;
   margin-top: var(--lh);
-  font: 600 calc(var(--lh) * 1.05) / calc(var(--lh) * 2) var(--hand);
-  rotate: -4deg;
-  transform-origin: left center;
 }
 
 .page-number {

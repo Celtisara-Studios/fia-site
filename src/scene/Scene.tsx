@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FocusEvent } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent } from 'react'
 import gsap from 'gsap'
 import { CHAPTERS } from '../chapters'
 import { colorize, type Point } from '../fx/ink'
+import { markerRibbon } from '../fx/marker'
 import { beamPaths, REST_AIM, turnToward, type Aim } from './beam'
 import { ITEMS, LOOP, SURFACE_Y, WALL_LOOP, WALL_SPEED, type Item } from './items'
 import { LAMP_BASE, LAMP_FRAME, LAMP_HEAD } from './lamp'
@@ -24,6 +25,25 @@ const WALL_ITEMS = ITEMS.filter((item) => item.surface === 'wall')
 const DESK_ITEMS = ITEMS.filter((item) => item.surface !== 'wall')
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/**
+ * The marker loop round a label, drawn on when its object is hovered (scene.css): a filled
+ * pen stroke that swells and thins, uncovered along its centre line by a mask. Its box is
+ * 150% × 230% of the label's (scene.css), so the viewBox takes that shape and the stroke stays even.
+ */
+function LabelCircle({ aspect, seed }: { aspect: number; seed: string }) {
+  const mask = `circle-${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+  const w = 40 * aspect * (1.5 / 2.3)
+  const { line, ribbon } = useMemo(() => markerRibbon(w, 40, seed), [w, seed])
+  return (
+    <svg className="item-circle" viewBox={`0 0 ${w.toFixed(1)} 40`} preserveAspectRatio="none" aria-hidden>
+      <mask id={mask}>
+        <path className="circle-reveal" d={line} pathLength={1} />
+      </mask>
+      <path className="circle-ink" d={ribbon} mask={`url(#${mask})`} />
+    </svg>
+  )
+}
 
 /** Where an object sits on the desk. */
 function placement(item: Item, scale: number, offset: number): CSSProperties {
@@ -319,6 +339,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto }: Props) {
           return (
             <Name key={c} className="wall-name" data-id="name" style={{ left: c * wallLoop }} aria-hidden={c !== 0 || undefined}>
               Fia Bondy
+              <img className="wall-sign" src="/art/signature.svg" alt="" draggable={false} />
             </Name>
           )
         })}
@@ -483,6 +504,8 @@ type ItemProps = {
 function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onFocus }: ItemProps) {
   const color = item.chapter ? CHAPTERS[item.chapter].color : null
   const [colorSrc, setColorSrc] = useState<string | null>(null)
+  /** The hand-lettered label's width over its height, once it's loaded. */
+  const [labelAspect, setLabelAspect] = useState(2.5)
 
   useEffect(() => {
     if (!color || item.colorSrc) return
@@ -503,7 +526,22 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
     </span>
   )
   const label = item.label && (
-    <span className={item.labelAbove ? 'item-label is-above' : 'item-label'}>{item.label}</span>
+    <span
+      className={['item-label', item.labelAbove && 'is-above', item.labelSrc && 'is-hand'].filter(Boolean).join(' ')}
+      style={item.labelAt && { left: `${item.labelAt.x ?? 50}%`, top: item.labelAt.y === undefined ? undefined : `${item.labelAt.y}%` }}
+    >
+      {item.labelSrc ? (
+        <img
+          src={item.labelSrc}
+          alt=""
+          draggable={false}
+          onLoad={(e) => setLabelAspect(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)}
+        />
+      ) : (
+        item.label
+      )}
+      <LabelCircle aspect={labelAspect} seed={item.id} />
+    </span>
   )
 
   if (item.href) {
@@ -566,7 +604,9 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
             {...reach}
           >
             <img src={LAMP_HEAD.src} alt="" draggable={false} />
-            <StickyNote>click me!</StickyNote>
+            <StickyNote>
+              <img src="/art/click-me.svg" alt="" draggable={false} />
+            </StickyNote>
           </button>
         </span>
       </div>
@@ -589,6 +629,7 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
           {item.face === 'clock' && <ClockHands />}
           {item.face === 'calendar' && <CalendarPage />}
         </span>
+        {label}
       </div>
     )
   }

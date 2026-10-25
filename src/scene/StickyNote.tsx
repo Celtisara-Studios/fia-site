@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 
 /**
  * A soft yellow sticky note with a lifted corner, drawn like the desk objects
- * (charcoal outline). The text is a handwriting font until Fia writes her own.
+ * (charcoal outline). What's written on it is centred: her hand-lettering as an
+ * image, or text in the handwriting font.
  */
 export function StickyNote({ children }: { children: ReactNode }) {
   return (

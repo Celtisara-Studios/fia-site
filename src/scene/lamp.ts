@@ -39,7 +39,8 @@ export const LAMP_HEAD = {
   } as CSSProperties,
 }
 
-export const LAMP_PARTS = [LAMP_BASE.src, LAMP_HEAD.src]
+/** Everything the lamp draws, its sticky note's lettering included, for the loader to wait on. */
+export const LAMP_PARTS = [LAMP_BASE.src, LAMP_HEAD.src, '/art/click-me.svg']
 
 /** The lamp's frame, the arm-top joint the head swings around, and its resting turn. */
 export const LAMP_FRAME = FRAME
