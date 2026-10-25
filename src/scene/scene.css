@@ -14,7 +14,7 @@
   cursor: var(--cursor-closed);
 }
 
-/* Wall: tight, soft little dots, moving with the wall (WALL_SPEED). --grid-size must match GRID in Scene.tsx. */
+/* Wall: tight, soft little dots, moving with the wall (WALL_SPEED in items.ts). --grid-size must match GRID in Scene.tsx. */
 .scene-grid {
   --grid-size: 10px;
   --grid-dot: color-mix(in srgb, var(--ink) 22%, var(--paper));

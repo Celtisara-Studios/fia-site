@@ -7,8 +7,14 @@ import type { ChapterId } from '../chapters'
  */
 export const LOOP = 2280
 
-/** The wall's lap: the desk's, since the wall moves with the desk (Scene.tsx). */
-export const WALL_LOOP = LOOP
+/** How fast the wall moves against the desk: a little slower, so it reads as a step further back. */
+export const WALL_SPEED = 0.85
+
+/**
+ * The wall's own lap (~2584px): 4 desk laps of its travel, split into 3. So it lines up with
+ * the desk again every 4 laps (HOME_LAPS in Scene.tsx), with a little more room than the desk.
+ */
+export const WALL_LOOP = (LOOP * WALL_SPEED * 4) / 3
 
 export type Item = {
   id: string
@@ -29,7 +35,7 @@ export type Item = {
    * the lap's end sits left of the first view.
    */
   x: number
-  /** 'wall' things hang on the wall and move with it (WALL_SPEED in Scene.tsx). */
+  /** 'wall' things hang on the wall and move with it, a little slower than the desk (WALL_SPEED). */
   surface: 'desk' | 'wall'
   /** Object height in vh. */
   h: number
@@ -203,9 +209,8 @@ export const ITEMS: Item[] = [
     y: 24.5,
   },
   // Polaroids of Fia's photos, each a little crooked and at its own height; ink at rest, their
-  // colour on hover. One between the calendar and the F1 poster (~90px from each). The other
-  // three share the ~320px of wall between the poster and the end of the lap (over the
-  // headphones), so they overlap a little, taped up as a cluster.
+  // colour on hover. One between the calendar and the F1 poster (~90px from each); the other
+  // three scattered past the poster ~70px apart, up to the end of the wall's lap.
   {
     id: 'polaroid-world-cup',
     src: '/art/polaroid-world-cup.webp',
@@ -223,7 +228,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-rome.webp',
     hoverSrc: '/art/polaroid-rome-color.webp',
     alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
-    x: 2033,
+    x: 2087,
     surface: 'wall',
     h: 18,
     y: 26,
@@ -234,24 +239,23 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-party.webp',
     hoverSrc: '/art/polaroid-party-color.webp',
     alt: 'A polaroid of a group hug at a party',
-    x: 2128,
+    x: 2273,
     surface: 'wall',
     h: 18,
-    y: 35,
-    rotate: -4,
+    y: 34,
+    rotate: -3,
   },
   {
     id: 'polaroid-race',
     src: '/art/polaroid-race.webp',
     hoverSrc: '/art/polaroid-race-color.webp',
     alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
-    // ends ~14px before the lap does (and ~24px before the next books), so on load the
-    // previous lap's copy is just off-screen left
-    x: 2208,
+    // ends ~67px before the wall's lap does, so on load the previous lap's copy is off-screen left
+    x: 2459,
     surface: 'wall',
     h: 18,
     y: 21,
-    rotate: 5,
+    rotate: 3,
   },
   {
     id: 'eraser',

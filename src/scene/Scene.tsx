@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { CHAPTERS } from '../chapters'
 import { colorize, type Point } from '../fx/ink'
 import { beamPaths, REST_AIM, turnToward, type Aim } from './beam'
-import { ITEMS, LOOP, SURFACE_Y, WALL_LOOP, type Item } from './items'
+import { ITEMS, LOOP, SURFACE_Y, WALL_LOOP, WALL_SPEED, type Item } from './items'
 import { LAMP_BASE, LAMP_FRAME, LAMP_HEAD } from './lamp'
 import { LampLight } from './LampLight'
 import { StickyNote } from './StickyNote'
@@ -14,9 +14,8 @@ import './scene.css'
 
 /** Every layer is drawn for the previous, current and next lap so the wrap is seamless. */
 const COPIES = [-1, 0, 1] as const
-/** The wall moves with the desk, as one room: what hangs on it always sits over the same spot. */
-const WALL_SPEED = 1
-const HOME_LAPS = 1
+/** Desk laps until the wall lines up with the desk again (see WALL_LOOP). */
+const HOME_LAPS = 4
 const GRID = 10
 /** Horizontal repeat of the rail's 45° crosshatch (5px apart, see .scene-rail). */
 const RAIL_HATCH = 5 * Math.SQRT2
