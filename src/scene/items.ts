@@ -157,10 +157,11 @@ export const ITEMS: Item[] = [
       { src: '/art/print-art-deco.webp', colorSrc: '/art/print-art-deco-color.webp', x: 51, y: 40, h: 50, turn: 2 },
       { src: '/art/print-watch.webp', colorSrc: '/art/print-watch-color.webp', x: 81, y: 60, h: 40, turn: -1.5 },
     ],
-    // the label sits close under the mat's front edge, clear of the desk's
+    // the label sits close under the mat's front edge, clear of the desk's, turned a touch
+    // clockwise to level out the lettering's climb
     label: 'Visual Art',
     labelSrc: '/art/label-visual-art.svg',
-    labelAt: { y: 102 },
+    labelAt: { y: 102, turn: 4 },
     x: 864,
     surface: 'desk',
     h: 34.9,
