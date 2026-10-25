@@ -102,9 +102,11 @@ type Props = {
   onBooks: () => void
   /** A polaroid on the wall was clicked: open the photo viewer at it. */
   onPhoto: (id: string) => void
+  /** The cutting mat was clicked: open her visual art. */
+  onGallery: () => void
 }
 
-export function Scene({ active, onOpen, onBooks, onPhoto }: Props) {
+export function Scene({ active, onOpen, onBooks, onPhoto, onGallery }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const world = useRef<HTMLDivElement>(null)
   const wall = useRef<HTMLDivElement>(null)
@@ -357,6 +359,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto }: Props) {
               onLamp={pressLamp}
               onBooks={onBooks}
               onPhoto={onPhoto}
+              onGallery={onGallery}
               // the wall moves slower than the desk and comes round on its own lap
               onFocus={() => pan.panTo((item.x * scale - window.innerWidth / 2) / WALL_SPEED, 1, wallLoop / WALL_SPEED)}
             />
@@ -378,6 +381,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto }: Props) {
               onLamp={pressLamp}
               onBooks={onBooks}
               onPhoto={onPhoto}
+              onGallery={onGallery}
               onFocus={() => pan.panTo(item.x * scale - window.innerWidth / 2)}
             />
           )),
@@ -498,10 +502,11 @@ type ItemProps = {
   onLamp: () => void
   onBooks: () => void
   onPhoto: (id: string) => void
+  onGallery: () => void
   onFocus: () => void
 }
 
-function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onFocus }: ItemProps) {
+function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onGallery, onFocus }: ItemProps) {
   const color = item.chapter ? CHAPTERS[item.chapter].color : null
   const [colorSrc, setColorSrc] = useState<string | null>(null)
   /** The hand-lettered label's width over its height, once it's loaded. */
@@ -562,27 +567,40 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
     )
   }
 
-  // The book stack's reading list, or a polaroid held up close: popups over the desk.
-  if (item.action === 'books' || item.action === 'photos') {
+  // The reading list, a polaroid held up close, or her visual art: popups over the desk.
+  if (item.action === 'books' || item.action === 'photos' || item.action === 'gallery') {
+    const open = { books: onBooks, photos: () => onPhoto(item.id), gallery: onGallery }[item.action]
     return (
       <button
         type="button"
-        className={item.hoverSrc ? 'item opens has-reveal' : 'item opens'} data-id={item.id}
+        className={['item opens', item.hoverSrc && 'has-reveal', item.flat && 'is-flat'].filter(Boolean).join(' ')}
+        data-id={item.id}
         data-action={item.action}
         style={style}
         aria-haspopup="dialog"
         aria-label={`Open ${item.label ?? item.alt}`}
-        onClick={item.action === 'books' ? onBooks : () => onPhoto(item.id)}
+        onClick={open}
         {...reach}
       >
-        {item.hoverSrc ? (
-          <span className="item-art">
-            <img src={item.src} alt="" draggable={false} />
-            <img className="item-reveal" src={item.hoverSrc} alt="" draggable={false} />
-          </span>
-        ) : (
-          art
-        )}
+        <span className="item-art">
+          <img src={item.src} alt="" draggable={false} />
+          {item.hoverSrc && <img className="item-reveal" src={item.hoverSrc} alt="" draggable={false} />}
+          {item.prints && (
+            // lying flat on its top surface, so drawn into the desk's slant
+            <span className="item-prints">
+              {item.prints.map((p) => (
+                <span
+                  key={p.src}
+                  className="print"
+                  style={{ left: `${p.x}%`, top: `${p.y}%`, height: `${p.h}%`, '--turn': `${p.turn}deg` } as CSSProperties}
+                >
+                  <img src={p.src} alt="" draggable={false} />
+                  <img className="print-color" src={p.colorSrc} alt="" draggable={false} />
+                </span>
+              ))}
+            </span>
+          )}
+        </span>
         {label}
       </button>
     )

@@ -6,6 +6,7 @@ import { drainObject, hideFlood, inkIn, inkObject, inkOut } from './fx/transitio
 import { Loader } from './Loader'
 import { PhoneNote } from './PhoneNote'
 import { BookList } from './popups/BookList'
+import { Gallery } from './popups/Gallery'
 import { PhotoViewer } from './popups/PhotoViewer'
 import type { Item } from './scene/items'
 import { Scene } from './scene/Scene'
@@ -43,6 +44,7 @@ export default function App() {
   const [books, setBooks] = useState(false)
   /** The polaroid the photo viewer opened at, while it's open. */
   const [photo, setPhoto] = useState<string | null>(null)
+  const [gallery, setGallery] = useState(false)
   const phone = usePhone()
   const openRef = useRef(open)
   const flood = useRef<HTMLDivElement>(null)
@@ -152,7 +154,13 @@ export default function App() {
 
   return (
     <>
-      <Scene active={open === null && !books && !photo} onOpen={openItem} onBooks={() => setBooks(true)} onPhoto={setPhoto} />
+      <Scene
+        active={open === null && !books && !photo && !gallery}
+        onOpen={openItem}
+        onBooks={() => setBooks(true)}
+        onPhoto={setPhoto}
+        onGallery={() => setGallery(true)}
+      />
       {Chapter && <Chapter.Component color={Chapter.color} onClose={requestClose} />}
       {books && (
         <BookList
@@ -160,6 +168,15 @@ export default function App() {
             setBooks(false)
             // back to the book stack, for keyboard users
             document.querySelector<HTMLElement>('.item[data-action="books"]:not([aria-hidden])')?.focus({ preventScroll: true })
+          }}
+        />
+      )}
+      {gallery && (
+        <Gallery
+          onClose={() => {
+            setGallery(false)
+            // back to the mat, for keyboard users
+            document.querySelector<HTMLElement>('.item[data-action="gallery"]:not([aria-hidden])')?.focus({ preventScroll: true })
           }}
         />
       )}

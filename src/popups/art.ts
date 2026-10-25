@@ -1,0 +1,50 @@
+/**
+ * Fia's visual art, in the order the gallery hangs it: two rows, three then two, each row
+ * the same height (Gallery.tsx). Images in public/art/gallery/: `<id>.webp` (1400px) for a
+ * piece held up close, `<id>-thumb.webp` (640px) for the wall of all of them.
+ */
+export type Piece = { id: string; title: string; alt: string; w: number; h: number }
+
+export const ART: Piece[] = [
+  {
+    id: 'once-upon-a-time',
+    title: 'Once Upon a Time',
+    alt: 'A large collage of dragons, moons, a burning tree and a sun with an eye, around the hand-lettered words “Once upon a time…”',
+    w: 1083,
+    h: 1400,
+  },
+  {
+    id: 'crochet-blanket',
+    title: 'Mini Crochet Blanket',
+    alt: 'A small purple and grey crochet blanket with an orange border, covered in stitched-on drawings: pride flags, padlocks on bridges, an “ACT UP” sign and “SILENCE=DEATH”',
+    w: 1361,
+    h: 1400,
+  },
+  {
+    id: 'art-deco',
+    title: 'Art Deco',
+    alt: 'A square painting of gold Art Deco arches and fans on deep burgundy',
+    w: 1400,
+    h: 1386,
+  },
+  {
+    id: 'watch',
+    title: 'Watch',
+    alt: 'A charcoal and white drawing of a metal wristwatch on tan paper',
+    w: 1400,
+    h: 955,
+  },
+  {
+    id: 'rhinestone-bag',
+    title: 'Rhinestone Bag',
+    alt: 'A clutch bag covered in iridescent rhinestones in a woven pattern',
+    w: 1400,
+    h: 1027,
+  },
+]
+
+/** Which pieces hang in each row of the gallery wall. */
+export const ROWS = [
+  [0, 1, 2],
+  [3, 4],
+]

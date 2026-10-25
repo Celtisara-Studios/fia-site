@@ -302,6 +302,56 @@
   .item.opens:hover .item-art {
     transform: rotate(3deg);
   }
+
+  /* except something lying flat (the mat): its prints turn a little and colour instead */
+  .item.opens.is-flat:hover .item-art {
+    transform: none;
+  }
+
+  /* each turns a little, every other one the other way */
+  .item.opens:hover .print {
+    rotate: calc(var(--turn) + 1.5deg);
+  }
+
+  .item.opens:hover .print:nth-child(even) {
+    rotate: calc(var(--turn) - 1.5deg);
+  }
+
+  .item.opens:hover .print-color {
+    opacity: 1;
+  }
+}
+
+/*
+ * Prints lying on the cutting mat's top surface: the box leans a touch into the desk's slant
+ * so they sit on it, then each is turned on the surface.
+ */
+.item-prints {
+  position: absolute;
+  inset: 6% 5% 7% 4%;
+  transform: skewX(-3deg) scaleY(0.96);
+}
+
+/* a print with a white paper border round the picture, so it stands clear of the mat's grid */
+.print {
+  --edge: 0.55vh;
+  position: absolute;
+  translate: -50% -50%;
+  rotate: var(--turn);
+  padding: var(--edge);
+  background: #fbf9f4;
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 3px 0 rgb(51 49 45 / 0.18);
+  transition: rotate 0.7s var(--ease-out);
+}
+
+.item .print .print-color {
+  position: absolute;
+  top: var(--edge);
+  left: var(--edge);
+  height: calc(100% - 2 * var(--edge));
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-paper);
 }
 
 .item-label {

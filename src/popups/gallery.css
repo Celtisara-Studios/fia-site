@@ -1,0 +1,215 @@
+/*
+ * Fia's visual art (Gallery.tsx): a paper card over the dimmed desk with her pieces hung in
+ * two even rows, each in a pale mat with its title under it; or one piece held up close.
+ * --gw is the card's inside width, as wide as fits both the screen and its height.
+ */
+.gallery {
+  --gw: min(880px, calc(100vw - 2 * var(--gutter) - 56px), calc((100svh - 2 * var(--gutter) - 210px) / 0.72));
+  position: relative;
+  width: calc(var(--gw) + 56px);
+  max-height: calc(100svh - var(--gutter) * 2);
+  padding: 20px 28px 26px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  animation: popup-rise 0.4s var(--ease-out) both;
+}
+
+.popup.is-leaving .gallery {
+  animation: popup-sink 0.22s var(--ease-paper) both;
+}
+
+.gallery-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.gallery-title {
+  margin: 0 auto 0 0;
+  line-height: 0;
+}
+
+.gallery-title img {
+  height: 44px;
+  width: auto;
+}
+
+.gallery-btn {
+  height: 36px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.gallery-btn:hover,
+.gallery-turn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* All of it: each row's pieces share its width in proportion, so they stand the same height. */
+.gallery-wall {
+  display: grid;
+  gap: 22px;
+}
+
+.gallery-row {
+  display: flex;
+  gap: 22px;
+}
+
+.gallery-piece {
+  flex: var(--ratio) 1 0;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+/* a pale mat and a thin ink edge, like a print pinned up */
+.gallery-frame {
+  display: block;
+  padding: 7px;
+  background: #fbf9f4;
+  border: 1.5px solid var(--ink);
+  transition:
+    translate 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
+}
+
+.gallery-frame img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  object-fit: cover;
+}
+
+.gallery-piece:hover .gallery-frame,
+.gallery-piece:focus-visible .gallery-frame {
+  translate: 0 -4px;
+  box-shadow: 4px 6px 0 rgb(51 49 45 / 0.25);
+}
+
+.gallery-piece:focus-visible {
+  outline: none;
+}
+
+.gallery-piece:focus-visible .gallery-frame {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.gallery-name {
+  font: 400 19px/1.15 var(--serif);
+}
+
+/* One piece up close, between two arrows. */
+.gallery-focus {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(12px, 2vw, 24px);
+}
+
+.gallery-turn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.gallery-turn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/*
+ * The same height whatever the piece's shape, so the card doesn't jump as you go round:
+ * the picture fits inside the space above its caption.
+ */
+.gallery-big {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+  height: min(calc(100svh - 2 * var(--gutter) - 150px), 760px);
+  margin: 0;
+  animation: piece-in 0.35s var(--ease-out) both;
+}
+
+.gallery-big img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 9px;
+  background: #fbf9f4;
+  border: 1.5px solid var(--ink);
+}
+
+.gallery-big figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.gallery-big .gallery-name {
+  font-size: 22px;
+}
+
+.gallery-count {
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The next piece slides in from the side you went towards. */
+.gallery-big.from-right {
+  --from: 28px;
+}
+
+.gallery-big.from-left {
+  --from: -28px;
+}
+
+@keyframes piece-in {
+  from {
+    opacity: 0.2;
+    translate: var(--from, 0) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery,
+  .popup.is-leaving .gallery,
+  .gallery-big {
+    animation-duration: 1ms;
+  }
+}

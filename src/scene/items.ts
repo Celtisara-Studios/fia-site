@@ -43,8 +43,17 @@ export type Item = {
   y?: number
   /** Opening this object fills it with the chapter's color. */
   chapter?: ChapterId
-  /** 'lamp' switches the lamp on and off; 'books' opens the reading list; 'photos' opens the photo viewer here. */
-  action?: 'lamp' | 'books' | 'photos'
+  /**
+   * 'lamp' switches the lamp on and off; 'books' opens the reading list; 'photos' opens the
+   * photo viewer here; 'gallery' opens Fia's visual art.
+   */
+  action?: 'lamp' | 'books' | 'photos' | 'gallery'
+  /**
+   * Prints of her art lying on a flat object (the mat), ink at rest and their colour on hover.
+   * `x`, `y` are each print's centre and `h` its height, in % of the object's top surface;
+   * `turn` is how crooked it lies, in degrees.
+   */
+  prints?: { src: string; colorSrc: string; x: number; y: number; h: number; turn: number }[]
   /** A polaroid's photo, big and in full colour, for the photo viewer (PhotoViewer.tsx). */
   photo?: string
   /** Opens this link in a new tab (e.g. a playlist). */
@@ -124,7 +133,22 @@ export const ITEMS: Item[] = [
   {
     id: 'cutting-mat',
     src: '/art/cutting-mat.svg',
-    alt: 'A cutting mat',
+    alt: 'A cutting mat with prints of Fia’s art on it',
+    // Opens her visual art. Three of her pieces lie on it as loose prints, each with a little
+    // mat showing between them: Once Upon a Time on the left, Art Deco, then the Watch.
+    action: 'gallery',
+    prints: [
+      {
+        src: '/art/print-once-upon-a-time.webp',
+        colorSrc: '/art/print-once-upon-a-time-color.webp',
+        x: 20,
+        y: 48,
+        h: 70,
+        turn: -3,
+      },
+      { src: '/art/print-art-deco.webp', colorSrc: '/art/print-art-deco-color.webp', x: 51, y: 40, h: 50, turn: 2 },
+      { src: '/art/print-watch.webp', colorSrc: '/art/print-watch-color.webp', x: 81, y: 60, h: 40, turn: -1.5 },
+    ],
     // the label sits close under the mat's front edge, clear of the desk's
     label: 'Visual Art',
     labelSrc: '/art/label-visual-art.svg',

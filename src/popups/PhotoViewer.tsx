@@ -18,10 +18,27 @@ export function PhotoViewer({ start, onClose }: { start: string; onClose: () => 
   const [dir, setDir] = useState<1 | -1 | 0>(0)
   const [leaving, setLeaving] = useState(false)
 
-  const go = useCallback((step: 1 | -1) => {
-    setDir(step)
-    setIndex((i) => (i + step + PHOTOS.length) % PHOTOS.length)
-  }, [])
+  /** The latest photo asked for, so a slow image can't land after a later click. */
+  const wanted = useRef(-1)
+
+  // Move once the next photo is decoded, so it never flashes in empty.
+  const go = useCallback(
+    (step: 1 | -1) => {
+      const i = (index + step + PHOTOS.length) % PHOTOS.length
+      wanted.current = i
+      const img = new Image()
+      img.src = PHOTOS[i].photo!
+      img
+        .decode()
+        .catch(() => undefined)
+        .then(() => {
+          if (wanted.current !== i) return
+          setDir(step)
+          setIndex(i)
+        })
+    },
+    [index],
+  )
 
   useEffect(() => {
     close.current?.focus()
