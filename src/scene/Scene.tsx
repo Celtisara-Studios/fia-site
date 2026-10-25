@@ -600,7 +600,7 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
         data-action={item.action}
         style={style}
         aria-haspopup="dialog"
-        aria-label={`Open ${item.label ?? item.alt}`}
+        aria-label={item.caption ? `Open polaroid: ${item.caption}` : `Open ${item.label ?? item.alt}`}
         onClick={open}
         {...reach}
       >
@@ -638,7 +638,7 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
             type="button"
             className="lamp-head"
             style={LAMP_HEAD.style}
-            aria-label="Desk lamp"
+            aria-label="Desk lamp: switch it on for a tour of the desk"
             aria-pressed={lit}
             onClick={onLamp}
             {...reach}

@@ -29,8 +29,9 @@ export function Loader({ onDone }: { onDone: () => void }) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const srcs = [
       ...new Set([
-        ...ITEMS.flatMap((i) => [i.src, i.colorSrc, i.hoverSrc, i.labelSrc].filter((s): s is string => !!s)),
-        ...ITEMS.flatMap((i) => i.prints?.flatMap((p) => [p.src, p.colorSrc]) ?? []),
+        // what shows at rest; the hover colours (poster, polaroids, prints) load in behind
+        ...ITEMS.flatMap((i) => [i.src, i.labelSrc].filter((s): s is string => !!s)),
+        ...ITEMS.flatMap((i) => i.prints?.map((p) => p.src) ?? []),
         ...LAMP_PARTS,
         '/art/signature.svg', // at the end of the poem
       ]),
