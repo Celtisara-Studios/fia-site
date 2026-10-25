@@ -29,6 +29,11 @@ export type Item = {
   hoverSrc?: string
   /** Live parts drawn over `src` (WallFaces.tsx): the clock's hands, the calendar's month and dates. */
   face?: 'clock' | 'calendar'
+  /**
+   * Fia's initials, written onto it on hover (Monogram.tsx): centre `x`, `y` and width `w`
+   * in % of the drawing, tilted `turn` degrees to lie on it.
+   */
+  doodle?: { x: number; y: number; w: number; turn: number }
   alt: string
   /**
    * World x of the object's center, 0 – LOOP (0 – WALL_LOOP for 'wall' things); just under
@@ -56,6 +61,8 @@ export type Item = {
   prints?: { src: string; colorSrc: string; x: number; y: number; h: number; turn: number }[]
   /** A polaroid's photo, big and in full colour, for the photo viewer (PhotoViewer.tsx). */
   photo?: string
+  /** What's written under a polaroid's photo when it's held up close, in Fia's words. */
+  caption?: string
   /** Opens this link in a new tab (e.g. a playlist). */
   href?: string
   /** Lies flat on the desk under everything else (a mat), regardless of depth. */
@@ -69,9 +76,10 @@ export type Item = {
   labelAbove?: boolean
   /**
    * Move the label to hug an odd shape: `x` is where its centre goes across the drawing,
-   * `y` where its top goes down it, both in % of the drawing from its top left.
+   * `y` where its top goes down it, both in % of the drawing from its top left; `turn` tilts
+   * it (degrees, clockwise) and `scale` sizes it against the other labels.
    */
-  labelAt?: { x?: number; y?: number }
+  labelAt?: { x?: number; y?: number; turn?: number; scale?: number }
 }
 
 export const SURFACE_Y: Record<Item['surface'], number> = { desk: 73.6, wall: 34 }
@@ -258,6 +266,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-world-cup.webp',
     hoverSrc: '/art/polaroid-world-cup-color.webp',
     photo: '/art/polaroid-world-cup-large.webp',
+    caption: 'World Cup with my brother Callum!',
     action: 'photos',
     alt: 'A polaroid from a rainy World Cup match, two people in ponchos in the stands',
     // ~90px right of the calendar, its bottom just above the sewing machine's spool
@@ -272,6 +281,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-rome.webp',
     hoverSrc: '/art/polaroid-rome-color.webp',
     photo: '/art/polaroid-rome-large.webp',
+    caption: 'Posing in front of Trevi Fountain',
     action: 'photos',
     alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
     x: 2222,
@@ -285,6 +295,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-map.webp',
     hoverSrc: '/art/polaroid-map-color.webp',
     photo: '/art/polaroid-map-large.webp',
+    caption: 'Ciao! Italy with the fam',
     action: 'photos',
     alt: 'A polaroid of five people in front of a huge painted map of Italy in a gilded museum gallery',
     x: 2452,
@@ -298,6 +309,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-party.webp',
     hoverSrc: '/art/polaroid-party-color.webp',
     photo: '/art/polaroid-party-large.webp',
+    caption: 'Familia',
     action: 'photos',
     alt: 'A polaroid of a group hug at a party',
     x: 2682,
@@ -311,6 +323,7 @@ export const ITEMS: Item[] = [
     src: '/art/polaroid-race.webp',
     hoverSrc: '/art/polaroid-race-color.webp',
     photo: '/art/polaroid-race-large.webp',
+    caption: 'Forza Ferrari!',
     action: 'photos',
     alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
     // ends ~80px before the wall's lap does, so on load the previous lap's copy is off-screen left
@@ -325,7 +338,9 @@ export const ITEMS: Item[] = [
     src: '/art/paper-pad.svg',
     alt: 'A clipped stack of paper',
     // front of the desk right of the mat (~70px clear), under the left end of the sewing
-    // machine's base, ~80px left of the machine's label
+    // machine's base, ~80px left of the machine's label. Hovering writes her "FB" on the
+    // top sheet, turned with the pad.
+    doodle: { x: 52, y: 53, w: 36, turn: -11 },
     x: 1255,
     surface: 'desk',
     h: 15,
@@ -351,13 +366,14 @@ export const ITEMS: Item[] = [
     // the screen cuts it on most laptops. Real-machine scale (~45cm wide next to the ~21cm
     // notebook). Brought forward enough to clear the wall above it for the clock, calendar
     // and polaroids; the front of its base now sits just behind the paper pad.
-    // Its label is tucked just under the front edge of the base, which slopes up to the right,
-    // so it sits left of centre where the base comes lowest; clear of the paper pad.
+    // Its label is tucked just under the front edge of the base, a little bigger than the
+    // others and tilted to run along it as the edge slopes up to the right; left of centre,
+    // where the base comes lowest, and clear of the paper pad.
     // Opens what she's made to wear.
     action: 'fashion',
     label: 'Fashion',
     labelSrc: '/art/label-fashion.svg',
-    labelAt: { x: 42, y: 97.5 },
+    labelAt: { x: 43, y: 96.5, turn: -13, scale: 1.2 },
     x: 1491,
     surface: 'desk',
     h: 49.3,

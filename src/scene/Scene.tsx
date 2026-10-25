@@ -10,6 +10,7 @@ import { LampLight } from './LampLight'
 import { StickyNote } from './StickyNote'
 import { TOUR, type TourStop } from './tour'
 import { useInfinitePan, wrap } from './useInfinitePan'
+import { Monogram } from './Monogram'
 import { CalendarPage, ClockHands } from './WallFaces'
 import './scene.css'
 
@@ -118,8 +119,6 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery, onFashion }
   const [lit, setLit] = useState(false)
   /** Which stop of the lamp's tour is showing, or null when there's no tour. */
   const [tour, setTour] = useState<number | null>(null)
-  /** The tour runs the first time the lamp comes on; after that it's a plain switch. */
-  const [toured, setToured] = useState(false)
   /** The box of what the current stop lights up; the panel sits beside it. */
   const [litBox, setLitBox] = useState<DOMRect | null>(null)
   const aim = useRef<Aim>({ ...REST_AIM })
@@ -289,7 +288,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery, onFashion }
     if (tour) showStop(tour - 1)
   }
 
-  // The lamp's head: off → lights on (and the tour, the first time); on → lights off.
+  // The lamp's head: off → lights on and the tour runs, every time; on → lights off.
   const pressLamp = () => {
     if (tour !== null || flicker.current?.isActive()) return
     if (lit) {
@@ -298,8 +297,6 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery, onFashion }
       return
     }
     setLit(true)
-    if (toured) return
-    setToured(true)
     // back to where the desk starts, wall and all, for the first stop
     showStop(0)
   }
@@ -355,7 +352,7 @@ export function Scene({ active, onOpen, onBooks, onPhoto, onGallery, onFashion }
           return (
             <Name key={c} className="wall-name" data-id="name" style={{ left: c * wallLoop }} aria-hidden={c !== 0 || undefined}>
               Fia Bondy
-              <img className="wall-sign" src="/art/signature.svg" alt="" draggable={false} />
+              <span className="wall-welcome">Welcome to my (very messy) desk!</span>
             </Name>
           )
         })}
@@ -550,7 +547,15 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
   const label = item.label && (
     <span
       className={['item-label', item.labelAbove && 'is-above', item.labelSrc && 'is-hand'].filter(Boolean).join(' ')}
-      style={item.labelAt && { left: `${item.labelAt.x ?? 50}%`, top: item.labelAt.y === undefined ? undefined : `${item.labelAt.y}%` }}
+      style={
+        item.labelAt &&
+        ({
+          left: `${item.labelAt.x ?? 50}%`,
+          top: item.labelAt.y === undefined ? undefined : `${item.labelAt.y}%`,
+          rotate: item.labelAt.turn && `${item.labelAt.turn}deg`,
+          '--label-scale': item.labelAt.scale,
+        } as CSSProperties)
+      }
     >
       {item.labelSrc ? (
         <img
@@ -663,6 +668,7 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
           {item.hoverSrc && <img className="item-reveal" src={item.hoverSrc} alt="" draggable={false} />}
           {item.face === 'clock' && <ClockHands />}
           {item.face === 'calendar' && <CalendarPage />}
+          {item.doodle && <Monogram {...item.doodle} />}
         </span>
         {label}
       </div>

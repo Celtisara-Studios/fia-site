@@ -32,11 +32,12 @@ export function Loader({ onDone }: { onDone: () => void }) {
         ...ITEMS.flatMap((i) => [i.src, i.colorSrc, i.hoverSrc, i.labelSrc].filter((s): s is string => !!s)),
         ...ITEMS.flatMap((i) => i.prints?.flatMap((p) => [p.src, p.colorSrc]) ?? []),
         ...LAMP_PARTS,
-        '/art/signature.svg', // under her name on the wall
+        '/art/signature.svg', // at the end of the poem
       ]),
     ]
     const jobs = [
       document.fonts.load('400 100px "Instrument Serif"'),
+      document.fonts.load('italic 400 30px "Instrument Serif"'), // the welcome under her name
       document.fonts.load('500 11px "Inter Tight"'),
       document.fonts.load('600 18px "Caveat"'),
       ...srcs.map(decode),

@@ -66,8 +66,8 @@
 
 .wall-name {
   position: absolute;
-  /* high enough to leave room for her signature under it, clear of the rail */
-  top: calc(var(--rail) - min(19vh, 22vw) * 1.45);
+  /* up near the top of the wall, the welcome line under it */
+  top: 6vh;
   /* Starts just right of the lamp on load (in vh, so it scales with the desk; see Scene.tsx). */
   margin: 0 0 0 67.1vh;
   font: 400 min(19vh, 22vw) / 1 var(--serif);
@@ -75,15 +75,18 @@
   white-space: nowrap;
 }
 
-/* Her signature, under the name at its right end, below the tail of the "y"; sized in em so it scales with the name. */
-.wall-sign {
+/*
+ * A line of welcome tucked close under the name, lined up with the "F", in the serif's
+ * italic; sized against the name so the two stay in proportion. (No descenders on that side,
+ * so it can sit up into the name's line box.)
+ */
+.wall-welcome {
   position: absolute;
-  top: calc(100% + 0.08em);
-  right: 0;
-  height: 0.31em;
-  width: auto;
-  pointer-events: none;
-  user-select: none;
+  top: calc(100% - 0.6em);
+  left: 0.04em;
+  font: italic 400 0.17em / 1.2 var(--serif);
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* Objects */
@@ -402,13 +405,63 @@
 }
 
 .item .item-label.is-hand img {
-  height: clamp(22px, 3.8vh, 42px);
+  height: calc(clamp(22px, 3.8vh, 42px) * var(--label-scale, 1));
   width: auto;
 }
 
 .item-label.is-above {
   top: auto;
   bottom: calc(100% + 1.6vh);
+}
+
+/*
+ * Her initials written onto something on hover (Monogram.tsx): the pen draws each stroke in
+ * turn (--at is its place in the order), then the whole monogram settles in so nothing the
+ * pen missed is left out. Moving away rubs it out; nothing shows at rest.
+ */
+.doodle {
+  position: absolute;
+  translate: -50% -50%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0s linear 0.3s;
+}
+
+.doodle-ink {
+  fill: var(--ink);
+}
+
+.doodle-pen {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.25s var(--ease-paper);
+}
+
+.doodle-rest {
+  fill: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.item:hover .doodle {
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.item:hover .doodle-pen {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0.1, 0.5, 1) calc(var(--at) * 0.24s);
+}
+
+.item:hover .doodle-rest {
+  opacity: 1;
+  transition: opacity 0.3s 1.5s;
 }
 
 /*
@@ -664,7 +717,10 @@
     animation: none;
   }
 
-  /* the label's circle just appears */
+  /* the label's circle and the initials just appear */
+  .doodle,
+  .doodle-pen,
+  .doodle-rest,
   .item-circle,
   .circle-reveal {
     transition: none !important;

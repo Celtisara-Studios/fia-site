@@ -7,8 +7,9 @@ import './photo-viewer.css'
 const PHOTOS = ITEMS.filter((item) => item.photo).sort((a, b) => a.x - b.x)
 
 /**
- * A polaroid from the wall, held up close in full colour, with arrows (and the arrow keys)
- * to go round all of them. Closes with the button, Esc, or a click outside.
+ * A polaroid from the wall, held up close in full colour with Fia's caption written under the
+ * photo, and arrows (and the arrow keys) to go round all of them. Closes with the button, Esc,
+ * or a click outside.
  */
 export function PhotoViewer({ start, onClose }: { start: string; onClose: () => void }) {
   const close = useRef<HTMLButtonElement>(null)
@@ -94,8 +95,11 @@ export function PhotoViewer({ start, onClose }: { start: string; onClose: () => 
           style={{ '--tilt': tilt } as CSSProperties}
         >
           <img src={photo.photo} alt={photo.alt} draggable={false} />
-          <figcaption className="photo-count" aria-live="polite">
-            {index + 1} / {PHOTOS.length}
+          <figcaption aria-live="polite">
+            {photo.caption && <span className="photo-caption">{photo.caption}</span>}
+            <span className="photo-count">
+              {index + 1} / {PHOTOS.length}
+            </span>
           </figcaption>
         </figure>
 
