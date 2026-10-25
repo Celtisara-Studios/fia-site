@@ -43,8 +43,10 @@ export type Item = {
   y?: number
   /** Opening this object fills it with the chapter's color. */
   chapter?: ChapterId
-  /** 'lamp' switches the lamp on and off; 'books' opens the reading list. */
-  action?: 'lamp' | 'books'
+  /** 'lamp' switches the lamp on and off; 'books' opens the reading list; 'photos' opens the photo viewer here. */
+  action?: 'lamp' | 'books' | 'photos'
+  /** A polaroid's photo, big and in full colour, for the photo viewer (PhotoViewer.tsx). */
+  photo?: string
   /** Opens this link in a new tab (e.g. a playlist). */
   href?: string
   /** Lies flat on the desk under everything else (a mat), regardless of depth. */
@@ -209,12 +211,15 @@ export const ITEMS: Item[] = [
     y: 24.5,
   },
   // Polaroids of Fia's photos, each a little crooked and at its own height; ink at rest, their
-  // colour on hover. One between the calendar and the F1 poster (~90px from each); the other
+  // colour on hover, and a click holds any of them up close in the photo viewer, which goes
+  // round all four. One between the calendar and the F1 poster (~90px from each); the other
   // three scattered past the poster ~70px apart, up to the end of the wall's lap.
   {
     id: 'polaroid-world-cup',
     src: '/art/polaroid-world-cup.webp',
     hoverSrc: '/art/polaroid-world-cup-color.webp',
+    photo: '/art/polaroid-world-cup-large.webp',
+    action: 'photos',
     alt: 'A polaroid from a rainy World Cup match, two people in ponchos in the stands',
     // ~90px right of the calendar, its bottom just above the sewing machine's spool
     x: 1542,
@@ -227,6 +232,8 @@ export const ITEMS: Item[] = [
     id: 'polaroid-rome',
     src: '/art/polaroid-rome.webp',
     hoverSrc: '/art/polaroid-rome-color.webp',
+    photo: '/art/polaroid-rome-large.webp',
+    action: 'photos',
     alt: 'A polaroid at the Trevi Fountain, one person sitting on another’s shoulders',
     x: 2087,
     surface: 'wall',
@@ -238,6 +245,8 @@ export const ITEMS: Item[] = [
     id: 'polaroid-party',
     src: '/art/polaroid-party.webp',
     hoverSrc: '/art/polaroid-party-color.webp',
+    photo: '/art/polaroid-party-large.webp',
+    action: 'photos',
     alt: 'A polaroid of a group hug at a party',
     x: 2273,
     surface: 'wall',
@@ -249,6 +258,8 @@ export const ITEMS: Item[] = [
     id: 'polaroid-race',
     src: '/art/polaroid-race.webp',
     hoverSrc: '/art/polaroid-race-color.webp',
+    photo: '/art/polaroid-race-large.webp',
+    action: 'photos',
     alt: 'A polaroid of someone waving a Ferrari flag in a grandstand',
     // ends ~67px before the wall's lap does, so on load the previous lap's copy is off-screen left
     x: 2459,

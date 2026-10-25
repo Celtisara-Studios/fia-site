@@ -80,9 +80,11 @@ type Props = {
   active: boolean
   onOpen: (item: Item, el: HTMLElement, at: Point) => void
   onBooks: () => void
+  /** A polaroid on the wall was clicked: open the photo viewer at it. */
+  onPhoto: (id: string) => void
 }
 
-export function Scene({ active, onOpen, onBooks }: Props) {
+export function Scene({ active, onOpen, onBooks, onPhoto }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const world = useRef<HTMLDivElement>(null)
   const wall = useRef<HTMLDivElement>(null)
@@ -333,7 +335,9 @@ export function Scene({ active, onOpen, onBooks }: Props) {
               onOpen={onOpen}
               onLamp={pressLamp}
               onBooks={onBooks}
-              onFocus={() => pan.panTo(item.x * scale - window.innerWidth / 2)}
+              onPhoto={onPhoto}
+              // the wall moves slower than the desk and comes round on its own lap
+              onFocus={() => pan.panTo((item.x * scale - window.innerWidth / 2) / WALL_SPEED, 1, wallLoop / WALL_SPEED)}
             />
           )),
         )}
@@ -352,6 +356,7 @@ export function Scene({ active, onOpen, onBooks }: Props) {
               onOpen={onOpen}
               onLamp={pressLamp}
               onBooks={onBooks}
+              onPhoto={onPhoto}
               onFocus={() => pan.panTo(item.x * scale - window.innerWidth / 2)}
             />
           )),
@@ -471,10 +476,11 @@ type ItemProps = {
   onOpen: Props['onOpen']
   onLamp: () => void
   onBooks: () => void
+  onPhoto: (id: string) => void
   onFocus: () => void
 }
 
-function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onFocus }: ItemProps) {
+function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, onPhoto, onFocus }: ItemProps) {
   const color = item.chapter ? CHAPTERS[item.chapter].color : null
   const [colorSrc, setColorSrc] = useState<string | null>(null)
 
@@ -518,19 +524,27 @@ function DeskItem({ item, scale, offset, primary, lit, onOpen, onLamp, onBooks, 
     )
   }
 
-  if (item.action === 'books') {
+  // The book stack's reading list, or a polaroid held up close: popups over the desk.
+  if (item.action === 'books' || item.action === 'photos') {
     return (
       <button
         type="button"
-        className="item opens" data-id={item.id}
-        data-action="books"
+        className={item.hoverSrc ? 'item opens has-reveal' : 'item opens'} data-id={item.id}
+        data-action={item.action}
         style={style}
         aria-haspopup="dialog"
         aria-label={`Open ${item.label ?? item.alt}`}
-        onClick={onBooks}
+        onClick={item.action === 'books' ? onBooks : () => onPhoto(item.id)}
         {...reach}
       >
-        {art}
+        {item.hoverSrc ? (
+          <span className="item-art">
+            <img src={item.src} alt="" draggable={false} />
+            <img className="item-reveal" src={item.hoverSrc} alt="" draggable={false} />
+          </span>
+        ) : (
+          art
+        )}
         {label}
       </button>
     )

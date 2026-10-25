@@ -140,11 +140,11 @@ export function useInfinitePan(
     () => ({
       /**
        * Ease to the lap-equivalent of `x` nearest to where we are. `laps` widens that
-       * to every so many laps, for layers that only line up again after a few.
+       * to every so many laps, for layers that only line up again after a few; `period`
+       * sets it outright, for a layer with a lap of its own (the wall).
        */
-      panTo(x: number, laps = 1) {
+      panTo(x: number, laps = 1, period = loop * laps) {
         const s = state.current
-        const period = loop * laps
         s.target = x + Math.round((s.target - x) / period) * period
       },
       /** Whether the pan has (all but) arrived where it's heading. */
