@@ -1,0 +1,403 @@
+/* The poem as Fia's notebook, open over the dimmed desk (PoemBook.tsx). */
+.poem-book {
+  /* A page's height sets everything: 24 ruled lines to a page, a page 0.72 as wide as it is tall. */
+  --page-h: min(78svh, 700px, calc((100vw - 2 * var(--gutter) - 170px) / 1.5));
+  --page-w: calc(var(--page-h) * 0.72);
+  --lh: calc(var(--page-h) / 24);
+  /* how far the marigold boards reach past the pages */
+  --board: calc(var(--lh) * 0.6);
+  /* the margin rule, from a page's left edge */
+  --mx: calc(var(--lh) * 1.9);
+  --rule: color-mix(in srgb, var(--accent) 42%, var(--paper));
+  --margin-line: color-mix(in srgb, var(--accent) 80%, var(--ink));
+  --highlight: color-mix(in srgb, var(--accent) 50%, var(--paper));
+}
+
+/* The book between its two turn buttons, with Close over its top right corner. */
+.poem-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  column-gap: clamp(12px, 2vw, 24px);
+  animation: popup-rise 0.45s var(--ease-out) both;
+}
+
+.popup.is-leaving .poem-stage {
+  animation: popup-sink 0.25s var(--ease-paper) both;
+}
+
+.book-close {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  right: calc(48px + clamp(12px, 2vw, 24px));
+  height: 36px;
+  padding: 0 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.book-turn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper),
+    opacity 0.3s var(--ease-paper);
+}
+
+.book-turn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.book-close:hover,
+.book-turn:not(:disabled):hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.book-turn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* The open book: two marigold boards, a page on each. */
+.book {
+  position: relative;
+  width: calc(var(--page-w) * 2 + var(--board) * 2);
+  height: calc(var(--page-h) + var(--board) * 2);
+  perspective: 2600px;
+}
+
+.half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+}
+
+.half.is-left {
+  left: 0;
+}
+
+.half.is-right {
+  right: 0;
+}
+
+/* Closed, only the right half is there, under the cover. */
+.book.is-opening .half.is-left {
+  visibility: hidden;
+}
+
+.board {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border: 1.5px solid var(--ink);
+}
+
+.is-left > .board {
+  border-right: 0;
+  border-radius: 10px 3px 3px 10px;
+}
+
+.is-right > .board {
+  border-left: 0;
+  border-radius: 3px 10px 10px 3px;
+}
+
+.slot {
+  position: absolute;
+  top: var(--board);
+  width: var(--page-w);
+  height: var(--page-h);
+}
+
+.is-left > .slot {
+  left: var(--board);
+}
+
+.is-right > .slot {
+  left: 0;
+}
+
+/* A ruled page, shading into the spine, with the edges of the pages under it showing. */
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+}
+
+.page.is-left {
+  background: linear-gradient(to left, rgb(51 49 45 / 0.16), transparent 9%) var(--paper);
+  box-shadow:
+    -4px 4px 0 -1.5px var(--paper),
+    -4px 4px 0 0 var(--ink),
+    -8px 8px 0 -1.5px var(--paper),
+    -8px 8px 0 0 var(--ink);
+}
+
+.page.is-right {
+  background: linear-gradient(to right, rgb(51 49 45 / 0.16), transparent 9%) var(--paper);
+  box-shadow:
+    4px 4px 0 -1.5px var(--paper),
+    4px 4px 0 0 var(--ink),
+    8px 8px 0 -1.5px var(--paper),
+    8px 8px 0 0 var(--ink);
+}
+
+.page.can-turn {
+  cursor: var(--cursor-point);
+}
+
+/* the ruled lines, leaving a band clear at the top and bottom */
+.page::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--lh) * 2) 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--lh) * 0.8 - 1px),
+    var(--rule) calc(var(--lh) * 0.8 - 1px) calc(var(--lh) * 0.8),
+    transparent calc(var(--lh) * 0.8) var(--lh)
+  );
+}
+
+/* the margin rule */
+.page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--mx);
+  width: 1.5px;
+  background: var(--margin-line);
+}
+
+/* Everything written on a page sits on its ruled lines: line height is one rule. */
+.page-text {
+  position: absolute;
+  inset: calc(var(--lh) * 2) calc(var(--lh) * 0.8) calc(var(--lh) * 2) calc(var(--mx) + var(--lh) * 0.55);
+  z-index: 1;
+}
+
+.page-text p {
+  margin: 0;
+}
+
+.stanza + .stanza {
+  margin-top: var(--lh);
+}
+
+.ln {
+  display: block;
+  font: 400 calc(var(--lh) * 0.67) / var(--lh) var(--serif);
+  white-space: nowrap;
+}
+
+/* What she says aloud: italic, with a marigold highlighter swipe. */
+.ln.is-said > span {
+  margin-left: -0.12em;
+  padding: 0 0.12em;
+  font-style: italic;
+  background: linear-gradient(transparent 58%, var(--highlight) 58% 90%, transparent 90%);
+}
+
+.page-text .page-sign {
+  width: fit-content;
+  margin-top: var(--lh);
+  font: 600 calc(var(--lh) * 1.05) / calc(var(--lh) * 2) var(--hand);
+  rotate: -4deg;
+  transform-origin: left center;
+}
+
+.page-number {
+  position: absolute;
+  bottom: calc(var(--lh) * 0.75);
+  z-index: 1;
+  font: 500 calc(var(--lh) * 0.34) / 1 var(--sans);
+  letter-spacing: 0.14em;
+}
+
+.page.is-left .page-number {
+  left: var(--lh);
+}
+
+.page.is-right .page-number {
+  right: var(--lh);
+}
+
+/* The title page: her name, the title, how to say it, what it means, and the story behind it. */
+.front-kicker {
+  font: 500 calc(var(--lh) * 0.38) / var(--lh) var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.page-text .front-title {
+  margin-top: var(--lh);
+  font: 400 calc(var(--lh) * 1.5) / calc(var(--lh) * 2) var(--serif);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.front-say {
+  font: italic 400 calc(var(--lh) * 0.68) / var(--lh) var(--serif);
+  color: color-mix(in srgb, var(--ink) 72%, var(--paper));
+}
+
+/* Big enough to read comfortably, still one line per rule; the page fits ~55 characters a line. */
+.front-meaning,
+.front-intro {
+  font: 400 calc(var(--lh) * 0.62) / var(--lh) var(--serif);
+}
+
+.page-text .front-meaning {
+  margin-top: var(--lh);
+}
+
+.marigold {
+  fill: var(--accent);
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.marigold-heart {
+  fill: var(--ink);
+}
+
+/* two rules tall with its space, so the intro below still sits on the lines */
+.front-flower {
+  display: block;
+  width: var(--lh);
+  height: var(--lh);
+  margin: calc(var(--lh) * 0.5) 0;
+}
+
+/* The outside of the front cover. */
+.cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--lh) * 0.6);
+  background: var(--accent);
+  border: 1.5px solid var(--ink);
+  border-radius: 3px 10px 10px 3px;
+}
+
+.cover .marigold {
+  fill: var(--paper);
+}
+
+.cover-flower {
+  width: calc(var(--lh) * 2.6);
+  height: calc(var(--lh) * 2.6);
+}
+
+.cover-title {
+  margin: 0;
+  font: 400 calc(var(--lh) * 1.3) / 1 var(--serif);
+  letter-spacing: -0.02em;
+}
+
+.cover-name {
+  margin: 0;
+  font: 500 calc(var(--lh) * 0.36) / 1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* A leaf turning over the spine, a page on each side of it. */
+.leaf {
+  position: absolute;
+  top: var(--board);
+  z-index: 3;
+  width: var(--page-w);
+  height: var(--page-h);
+  transform-style: preserve-3d;
+}
+
+.leaf.turns-forward {
+  left: 50%;
+  transform-origin: left center;
+  animation: leaf-forward 0.85s var(--ease-paper) forwards;
+}
+
+.leaf.turns-back {
+  left: var(--board);
+  transform-origin: right center;
+  animation: leaf-back 0.85s var(--ease-paper) forwards;
+}
+
+/* The front cover, with the title page inside it: starts closed over the right half. */
+.leaf.opens {
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: right center;
+  animation: leaf-open 1.1s var(--ease-paper) 0.35s both;
+}
+
+.leaf-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.leaf-face.is-back {
+  transform: rotateY(180deg);
+}
+
+@keyframes leaf-forward {
+  to {
+    transform: rotateY(-180deg);
+  }
+}
+
+@keyframes leaf-back {
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes leaf-open {
+  from {
+    transform: rotateY(180deg);
+  }
+  to {
+    transform: rotateY(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poem-stage,
+  .popup.is-leaving .poem-stage {
+    animation-duration: 1ms;
+  }
+}

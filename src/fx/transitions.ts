@@ -69,6 +69,50 @@ export function inkIn(colorEl: HTMLElement, flood: HTMLElement, at: Point, color
 }
 
 /**
+ * Open as a popup: color soaks through the object from where it was touched, and stays.
+ * Resolves once the object is full.
+ */
+export function inkObject(colorEl: HTMLElement, at: Point): Promise<void> {
+  if (reduced()) {
+    colorEl.style.clipPath = 'none'
+    return Promise.resolve()
+  }
+  const { p, fill } = local(colorEl, at)
+  const seed = Math.random() * 10
+  const s = { obj: 0 }
+  return play(
+    gsap.timeline().to(s, {
+      obj: fill,
+      duration: 0.6,
+      ease: 'power2.out',
+      onUpdate: () => void (colorEl.style.clipPath = inkBlob(p.x, p.y, s.obj, seed, s.obj / fill)),
+      onComplete: () => void (colorEl.style.clipPath = 'none'),
+    }),
+  )
+}
+
+/** A popup closed: the color drains back out of its object. */
+export function drainObject(colorEl: HTMLElement): Promise<void> {
+  if (reduced()) {
+    colorEl.style.clipPath = ''
+    return Promise.resolve()
+  }
+  const box = colorEl.getBoundingClientRect()
+  const fill = Math.hypot(box.width, box.height) / 2 + 30
+  const seed = Math.random() * 10
+  const s = { obj: fill }
+  return play(
+    gsap.timeline().to(s, {
+      obj: 0,
+      duration: 0.6,
+      ease: 'power2.inOut',
+      onUpdate: () => void (colorEl.style.clipPath = inkBlob(box.width / 2, box.height / 2, s.obj, seed, s.obj / fill)),
+      onComplete: () => void (colorEl.style.clipPath = ''),
+    }),
+  )
+}
+
+/**
  * Close: color spreads over the chapter from where Close was pressed, `swap`
  * unmounts the chapter underneath, then the color retreats into its object
  * and drains out of it.

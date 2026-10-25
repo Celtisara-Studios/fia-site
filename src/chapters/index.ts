@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 import type { Point } from '../fx/ink'
-import PoemChapter from './PoemChapter'
+import PoemBook from './PoemBook'
 
 export type ChapterProps = {
   color: string
@@ -11,11 +11,13 @@ export type Chapter = {
   /** The one color this chapter (and its object on the desk) fills with. */
   color: string
   Component: ComponentType<ChapterProps>
+  /** Opens as a popup over the dimmed desk instead of flooding the screen with its color. */
+  popup?: boolean
 }
 
 export const CHAPTERS = {
   // Marigold: cempasúchil, the Day of the Dead flower.
-  writing: { color: '#f0a01e', Component: PoemChapter },
+  writing: { color: '#f0a01e', Component: PoemBook, popup: true },
 } satisfies Record<string, Chapter>
 
 export type ChapterId = keyof typeof CHAPTERS

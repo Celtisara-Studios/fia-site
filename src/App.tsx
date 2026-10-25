@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { CHAPTERS, isChapterId, type ChapterId } from './chapters'
+import { CHAPTERS, isChapterId, type Chapter, type ChapterId } from './chapters'
 import type { Point } from './fx/ink'
-import { hideFlood, inkIn, inkOut } from './fx/transitions'
+import { drainObject, hideFlood, inkIn, inkObject, inkOut } from './fx/transitions'
 import { Loader } from './Loader'
 import { PhoneNote } from './PhoneNote'
 import { BookList } from './popups/BookList'
@@ -28,6 +28,9 @@ function findObject(id: ChapterId): HTMLElement | null {
   return best
 }
 
+/** Chapters that open as a popup over the desk, with no color flood. */
+const isPopup = (id: ChapterId) => (CHAPTERS[id] as Chapter).popup === true
+
 const centerOf = (el: Element): Point => {
   const r = el.getBoundingClientRect()
   return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
@@ -42,20 +45,32 @@ export default function App() {
   const flood = useRef<HTMLDivElement>(null)
   const busy = useRef(false)
   const closeFrom = useRef<Point | undefined>(undefined)
+  /** The object a popup chapter colored in on the way open, to drain on the way out. */
+  const inked = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
     openRef.current = open
-    document.documentElement.classList.toggle('is-chapter', open !== null)
+    // a full-screen chapter scrolls the page; a popup leaves the desk fixed
+    document.documentElement.classList.toggle('is-chapter', open !== null && !isPopup(open))
   }, [open])
 
   const runOpen = useCallback(async (id: ChapterId, el: HTMLElement, at: Point, push: boolean) => {
     if (busy.current || openRef.current) return
     busy.current = true
-    await inkIn(el.querySelector<HTMLElement>('.item-color') ?? el, flood.current!, at, CHAPTERS[id].color)
+    const popup = isPopup(id)
+    const colorEl = el.querySelector<HTMLElement>('.item-color')
+    if (!popup) await inkIn(colorEl ?? el, flood.current!, at, CHAPTERS[id].color)
+    else if (colorEl) {
+      // the object fills with the chapter's color first, then the popup opens over it
+      inked.current = colorEl
+      await inkObject(colorEl, at)
+    }
     flushSync(() => setOpen(id))
     if (push) window.history.pushState({ chapter: id }, '', `#${id}`)
-    window.scrollTo(0, 0)
-    hideFlood(flood.current!)
+    if (!popup) {
+      window.scrollTo(0, 0)
+      hideFlood(flood.current!)
+    }
     busy.current = false
   }, [])
 
@@ -63,12 +78,20 @@ export default function App() {
     const id = openRef.current
     if (busy.current || !id) return
     busy.current = true
-    const at = from ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 }
-    await inkOut(flood.current!, at, CHAPTERS[id].color, () => {
+    if (isPopup(id)) {
+      // the popup has already played its own way out; then the color drains from its object
       flushSync(() => setOpen(null))
-      window.scrollTo(0, 0)
-      return findObject(id)?.querySelector<HTMLElement>('.item-color') ?? null
-    })
+      const colorEl = inked.current ?? findObject(id)?.querySelector<HTMLElement>('.item-color')
+      inked.current = null
+      if (colorEl) await drainObject(colorEl)
+    } else {
+      const at = from ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+      await inkOut(flood.current!, at, CHAPTERS[id].color, () => {
+        flushSync(() => setOpen(null))
+        window.scrollTo(0, 0)
+        return findObject(id)?.querySelector<HTMLElement>('.item-color') ?? null
+      })
+    }
     findObject(id)?.focus({ preventScroll: true })
     busy.current = false
   }, [])
@@ -108,7 +131,8 @@ export default function App() {
       }
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && openRef.current) requestClose()
+      // a popup handles its own Esc, so it can play its way out first
+      if (e.key === 'Escape' && openRef.current && !isPopup(openRef.current)) requestClose()
     }
     window.addEventListener('popstate', onPop)
     window.addEventListener('keydown', onKey)
