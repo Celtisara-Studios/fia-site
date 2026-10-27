@@ -7,14 +7,8 @@ import './gallery.css'
 const bigSrc = (i: number) => `/art/gallery/${ART[i].id}.webp`
 
 /**
- * How tall the wall of pieces is for its width: each row's pieces share its width, so a row
- * is as tall as its width over their widths-over-heights added up. The card sizes from it.
- */
-const WALL = ROWS.reduce((sum, row) => sum + 1 / row.reduce((r, i) => r + ART[i].w / ART[i].h, 0), 0)
-
-/**
- * Fia's visual art, opened from the cutting mat: all of it hung together on a paper card,
- * and any piece held up close with arrows (and the arrow keys) round the rest. Esc steps
+ * Fia's visual art, opened from the cutting mat: all of it hung together on a paper card that
+ * scrolls, and any piece held up close with arrows (and the arrow keys) round the rest. Esc steps
  * back from a piece to all of them, then closes; so do Close and a click on the desk.
  */
 export function Gallery({ onClose }: { onClose: () => void }) {
@@ -59,7 +53,6 @@ export function Gallery({ onClose }: { onClose: () => void }) {
       <section
         ref={stage}
         className="gallery"
-        style={{ '--wall': WALL, '--rows': ROWS.length } as CSSProperties}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title}

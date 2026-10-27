@@ -1,6 +1,6 @@
 /**
- * Fia's visual art, in the order the gallery hangs it: two rows of four, the pieces in each
- * row the same height (Gallery.tsx), and the same order going round them up close. Images in public/art/gallery/: `<id>.webp` (1400px) for a
+ * Fia's visual art, in the order the gallery hangs it: three rows (three, three, two), the
+ * pieces in each row the same height (Gallery.tsx), and the same order going round them up close. Images in public/art/gallery/: `<id>.webp` (1400px) for a
  * piece held up close, `<id>-thumb.webp` (640px) for the wall of all of them.
  */
 export type Piece = { id: string; title: string; alt: string; w: number; h: number }
@@ -35,20 +35,6 @@ export const ART: Piece[] = [
     h: 1400,
   },
   {
-    id: 'watch',
-    title: 'Watch',
-    alt: 'A charcoal and white drawing of a metal wristwatch on tan paper',
-    w: 1400,
-    h: 955,
-  },
-  {
-    id: 'rhinestone-bag',
-    title: 'Rhinestone Bag',
-    alt: 'A clutch bag covered in iridescent rhinestones in a woven pattern',
-    w: 1400,
-    h: 1027,
-  },
-  {
     id: 'pumpkin-spice-latte',
     title: 'Pumpkin Spice Latte',
     alt: 'A fashion drawing of a figure in fishnet tights, wearing an off-the-shoulder top made from pumpkin spice latte packaging',
@@ -62,10 +48,25 @@ export const ART: Piece[] = [
     w: 1050,
     h: 1400,
   },
+  {
+    id: 'watch',
+    title: 'Watch',
+    alt: 'A charcoal and white drawing of a metal wristwatch on tan paper',
+    w: 1400,
+    h: 955,
+  },
+  {
+    id: 'rhinestone-bag',
+    title: 'Rhinestone Bag',
+    alt: 'A clutch bag covered in iridescent rhinestones in a woven pattern',
+    w: 1400,
+    h: 1027,
+  },
 ]
 
 /** Which pieces hang in each row of the gallery wall. */
 export const ROWS = [
-  [0, 1, 2, 3],
-  [4, 5, 6, 7],
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7],
 ]

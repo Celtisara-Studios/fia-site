@@ -1,17 +1,14 @@
 /*
  * Fia's visual art (Gallery.tsx): a paper card over the dimmed desk with her pieces hung in
  * two even rows, each in a pale mat with its title under it; or one piece held up close.
- * --gw is the card's inside width, as wide as fits both the screen and its height: --wall
- * (the rows' height for each unit of width) and --rows come from Gallery.tsx, and each row
- * also needs ~64px for its frames, title and gap.
+ * --gw is the card's inside width, as wide as fits the screen. The pieces hang big and the
+ * wall of them scrolls inside the card, under its header.
  */
 .gallery {
-  --gw: min(
-    980px,
-    calc(100vw - 2 * var(--gutter) - 56px),
-    calc((100svh - 2 * var(--gutter) - 120px - var(--rows) * 64px) / var(--wall))
-  );
+  --gw: min(1040px, calc(100vw - 2 * var(--gutter) - 56px));
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: calc(var(--gw) + 56px);
   max-height: calc(100svh - var(--gutter) * 2);
   padding: 20px 28px 26px;
@@ -66,7 +63,13 @@
 /* All of it: each row's pieces share its width in proportion, so they stand the same height. */
 .gallery-wall {
   display: grid;
-  gap: 22px;
+  gap: 26px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* room for the lift on hover and the focus ring, inside the scroll */
+  margin: 0 -12px;
+  padding: 6px 12px 4px;
 }
 
 .gallery-row {
