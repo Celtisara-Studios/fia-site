@@ -1,10 +1,16 @@
 /*
  * Fia's visual art (Gallery.tsx): a paper card over the dimmed desk with her pieces hung in
  * two even rows, each in a pale mat with its title under it; or one piece held up close.
- * --gw is the card's inside width, as wide as fits both the screen and its height.
+ * --gw is the card's inside width, as wide as fits both the screen and its height: --wall
+ * (the rows' height for each unit of width) and --rows come from Gallery.tsx, and each row
+ * also needs ~64px for its frames, title and gap.
  */
 .gallery {
-  --gw: min(880px, calc(100vw - 2 * var(--gutter) - 56px), calc((100svh - 2 * var(--gutter) - 210px) / 0.72));
+  --gw: min(
+    980px,
+    calc(100vw - 2 * var(--gutter) - 56px),
+    calc((100svh - 2 * var(--gutter) - 120px - var(--rows) * 64px) / var(--wall))
+  );
   position: relative;
   width: calc(var(--gw) + 56px);
   max-height: calc(100svh - var(--gutter) * 2);
