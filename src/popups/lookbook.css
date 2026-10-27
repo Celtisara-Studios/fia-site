@@ -2,10 +2,15 @@
  * What Fia has made to wear (Lookbook.tsx): a paper card cut like a sewing pattern (a dashed
  * cutting line inside its edge) with her looks on wooden hangers along a clothes rail, each
  * named underneath. --lw is the card's inside width; the looks share it so they hang the
- * same height.
+ * same height. --ratios (their widths over heights, added up) and --looks (how many) come
+ * from Lookbook.tsx, so the card fits however many hang on the rail.
  */
 .lookbook {
-  --lw: min(820px, calc(100vw - 2 * var(--gutter) - 56px), calc((100svh - 2 * var(--gutter) - 250px) * 2.03 + 56px));
+  --lw: min(
+    1100px,
+    calc(100vw - 2 * var(--gutter) - 56px),
+    calc((100svh - 2 * var(--gutter) - 250px) * var(--ratios) + var(--looks) * 24px)
+  );
   position: relative;
   width: calc(var(--lw) + 56px);
   max-height: calc(100svh - var(--gutter) * 2);
@@ -70,7 +75,7 @@
 .rail {
   position: relative;
   display: flex;
-  gap: 28px;
+  gap: 24px;
   padding: 0 6px;
 }
 

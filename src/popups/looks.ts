@@ -26,4 +26,18 @@ export const LOOKS: Piece[] = [
     w: 675,
     h: 900,
   },
+  {
+    id: 'plaid-bustier',
+    title: 'Plaid Bustier',
+    alt: 'A strapless red and pink plaid bustier top on a green dress form',
+    w: 675,
+    h: 900,
+  },
+  {
+    id: 'scarf-print-halter',
+    title: 'Scarf Print Halter',
+    alt: 'A V-neck halter top pieced from orange and cream floral prints, with a navy patterned band under the bust, on a red dress form',
+    w: 675,
+    h: 900,
+  },
 ]

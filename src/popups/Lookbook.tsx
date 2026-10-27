@@ -3,6 +3,9 @@ import { LOOKS } from './looks'
 import './popup.css'
 import './lookbook.css'
 
+/** How wide the looks are together, in heights: the card sizes itself so they all fit on the rail. */
+const RAIL_RATIO = LOOKS.reduce((sum, look) => sum + look.w / look.h, 0)
+
 /** A wooden hanger with a wire hook, hooked over the rail. */
 function Hanger() {
   return (
@@ -47,6 +50,7 @@ export function Lookbook({ onClose }: { onClose: () => void }) {
       <div className="popup-scrim" onClick={() => setLeaving(true)} />
       <section
         className="lookbook"
+        style={{ '--ratios': RAIL_RATIO, '--looks': LOOKS.length } as CSSProperties}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title}
