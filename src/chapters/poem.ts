@@ -12,7 +12,7 @@ export const POEM = {
   title: 'Mictēcacihuātl',
   say: 'Meek-te-ka-see-wah-tl',
   meaning:
-    'In Aztec mythology, is a death deity and consort of Mictlāntēcutli, god of the dead and ruler of Mictlān, the lowest level of the underworld.',
+    'In Aztec mythology, she is a death deity and consort of Mictlāntēcutli, god of the dead and ruler of Mictlān, the lowest level of the underworld.',
   intro:
     'La Catrina is Mexico’s iconic skeletal figure, a satirical symbol of death and vanity, created by artist José Guadalupe Posada around 1910 to mock Mexican elites adopting European fashions, who later became a beloved symbol for the Day of the Dead (Día de los Muertos), representing that death brings equality to all, rich or poor.',
   pages: [

@@ -20,6 +20,13 @@ export const LOOKS: Piece[] = [
     h: 900,
   },
   {
+    id: 'pumpkin-spice-latte',
+    title: 'Pumpkin Spice Latte',
+    alt: 'A fashion drawing of a figure in fishnet tights, wearing an off-the-shoulder top made from pumpkin spice latte packaging',
+    w: 528,
+    h: 900,
+  },
+  {
     id: 'rainbow-towel-tank-top',
     title: 'Rainbow Towel Tank Top',
     alt: 'A halter tank top sewn from a rainbow paisley towel, on a dress form',
