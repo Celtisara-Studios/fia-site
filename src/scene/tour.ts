@@ -29,7 +29,7 @@ export const TOUR: TourStop[] = [
   },
   {
     target: 'notebook',
-    line: 'Start with my writing: open the notebook to read my poem.',
+    line: 'Start with my writing: open the notebook to read my poems.',
     side: 'below',
   },
   {

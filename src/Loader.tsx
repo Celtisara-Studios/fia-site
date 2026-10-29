@@ -33,7 +33,7 @@ export function Loader({ onDone }: { onDone: () => void }) {
         ...ITEMS.flatMap((i) => [i.src, i.labelSrc].filter((s): s is string => !!s)),
         ...ITEMS.flatMap((i) => i.prints?.map((p) => p.src) ?? []),
         ...LAMP_PARTS,
-        '/art/signature.svg', // at the end of the poem
+        '/art/signature.svg', // inside the notebook's cover, and at the end of each poem
       ]),
     ]
     const jobs = [

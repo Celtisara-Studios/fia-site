@@ -1,4 +1,4 @@
-/* The poem as Fia's notebook, open over the dimmed desk (PoemBook.tsx). */
+/* Fia's poems as her notebook, open over the dimmed desk (PoemBook.tsx). */
 .poem-book {
   /* A page's height sets everything: 24 ruled lines to a page, a page 0.72 as wide as it is tall. */
   --page-h: min(78svh, 700px, calc((100vw - 2 * var(--gutter) - 170px) / 1.5));
@@ -13,7 +13,7 @@
   --highlight: color-mix(in srgb, var(--accent) 50%, var(--paper));
 }
 
-/* The book between its two turn buttons, with Close over its top right corner. */
+/* The book between its two turn buttons, with Contents and Close over its top right corner. */
 .poem-stage {
   position: relative;
   display: grid;
@@ -27,10 +27,15 @@
   animation: popup-sink 0.25s var(--ease-paper) both;
 }
 
-.book-close {
+.book-bar {
   position: absolute;
   bottom: calc(100% + 14px);
   right: calc(48px + clamp(12px, 2vw, 24px));
+  display: flex;
+  gap: 10px;
+}
+
+.book-btn {
   height: 36px;
   padding: 0 18px;
   border: 1.5px solid var(--ink);
@@ -69,7 +74,7 @@
   stroke-linejoin: round;
 }
 
-.book-close:hover,
+.book-btn:hover,
 .book-turn:not(:disabled):hover {
   background: var(--ink);
   color: var(--paper);
@@ -210,10 +215,12 @@
   margin-top: var(--lh);
 }
 
+/* A line too long for the page turns over onto the next rule, indented. */
 .ln {
   display: block;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
   font: 400 calc(var(--lh) * 0.67) / var(--lh) var(--serif);
-  white-space: nowrap;
 }
 
 /* What she says aloud: italic, with a marigold highlighter swipe. */
@@ -248,7 +255,10 @@
   right: var(--lh);
 }
 
-/* The title page: her name, the title, how to say it, what it means, and the story behind it. */
+/*
+ * A poem's title page: her name, the title (over two rules if it's long), then how to say it,
+ * what it means and the story behind it, or the lines it starts from.
+ */
 .front-kicker {
   font: 500 calc(var(--lh) * 0.38) / var(--lh) var(--sans);
   letter-spacing: 0.14em;
@@ -259,7 +269,9 @@
   margin-top: var(--lh);
   font: 400 calc(var(--lh) * 1.5) / calc(var(--lh) * 2) var(--serif);
   letter-spacing: -0.02em;
-  white-space: nowrap;
+  /* a long title breaks over two rules, evenly */
+  max-width: 8em;
+  text-wrap: balance;
 }
 
 .front-say {
@@ -293,6 +305,154 @@
   width: var(--lh);
   height: var(--lh);
   margin: calc(var(--lh) * 0.5) 0;
+}
+
+.front-epigraph {
+  margin: var(--lh) 0 0;
+}
+
+.front-epigraph p {
+  font: italic 400 calc(var(--lh) * 0.68) / var(--lh) var(--serif);
+}
+
+.front-epigraph .front-source {
+  font-style: normal;
+  font-size: calc(var(--lh) * 0.58);
+  color: color-mix(in srgb, var(--ink) 72%, var(--paper));
+}
+
+/* Inside the front cover: a marigold, and her name signed under it. */
+.flyleaf {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--lh) * 0.8);
+}
+
+.flyleaf-flower {
+  width: calc(var(--lh) * 3.4);
+  height: calc(var(--lh) * 3.4);
+}
+
+.flyleaf img {
+  height: calc(var(--lh) * 2.6);
+  width: auto;
+}
+
+/*
+ * The contents: a poem to an entry, two rules tall: its title, dotted out to the page it starts
+ * on, and its first line under it, with a round arrow like the book's own beside them. Pointing
+ * at one swipes a marigold highlighter across the title and fills the arrow in.
+ */
+.toc {
+  margin: var(--lh) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc li + li {
+  margin-top: var(--lh);
+}
+
+.toc-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: var(--lh) var(--lh);
+  column-gap: calc(var(--lh) * 0.6);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.toc-line {
+  grid-column: 1;
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--lh) * 0.3);
+  font: 400 calc(var(--lh) * 0.9) / var(--lh) var(--serif);
+  white-space: nowrap;
+}
+
+.toc-title {
+  background: linear-gradient(transparent 58%, var(--highlight) 58% 90%, transparent 90%) no-repeat 0 0 / 0% 100%;
+  transition: background-size 0.45s var(--ease-paper);
+}
+
+/* the leader: an empty span sits its bottom edge, so its dots, on the line */
+.toc-dots {
+  flex: 1;
+  min-width: var(--lh);
+  border-bottom: 2px dotted color-mix(in srgb, var(--ink) 45%, var(--paper));
+}
+
+.toc-no {
+  font: 500 calc(var(--lh) * 0.36) / 1 var(--sans);
+  letter-spacing: 0.14em;
+}
+
+.toc-first {
+  grid-column: 1;
+  font: italic 400 calc(var(--lh) * 0.62) / var(--lh) var(--serif);
+  color: color-mix(in srgb, var(--ink) 72%, var(--paper));
+  white-space: nowrap;
+}
+
+.toc-go {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: calc(var(--lh) * 1.4);
+  height: calc(var(--lh) * 1.4);
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  transition:
+    background-color 0.4s var(--ease-paper),
+    color 0.4s var(--ease-paper);
+}
+
+.toc-go svg {
+  width: 48%;
+  height: 48%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 0.3s var(--ease-out);
+}
+
+.toc-entry:hover .toc-title,
+.toc-entry:focus-visible .toc-title {
+  background-size: 100% 100%;
+}
+
+.toc-entry:hover .toc-go,
+.toc-entry:focus-visible .toc-go {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.toc-entry:hover .toc-go svg {
+  translate: 10% 0;
+}
+
+.toc-entry:focus-visible {
+  outline: none;
+}
+
+.toc-entry:focus-visible .toc-go {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 /* The outside of the front cover. */

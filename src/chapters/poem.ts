@@ -1,14 +1,31 @@
 /**
- * Mictēcacihuātl, by Fia Bondy: her words, line for line, as they fall on the pages of the
- * open book (PoemBook.tsx). A page holds 20 ruled lines, with a blank one between stanzas,
- * and a stanza never breaks across a page.
+ * Fia Bondy's poems, in the order the notebook's contents lists them: her words, line for line,
+ * as they fall on its pages (PoemBook.tsx). A page holds 20 ruled lines, with a blank one
+ * between stanzas, and a stanza never breaks across a page. A line too long for the page turns
+ * over onto the next, indented. Each poem opens on a left-hand title page facing its first
+ * page, so each has an odd number of pages.
  */
 
-/** A line of the poem, or one La Catrina says aloud (italic, with a marigold highlight). */
+/** A line of a poem, or one said aloud (italic, with a marigold highlight). */
 export type Line = string | { said: string }
 export type Stanza = Line[]
 
-export const POEM = {
+export type Poem = {
+  id: string
+  title: string
+  /** On its title page, under the title: how to say it, what it means, the story behind it… */
+  say?: string
+  meaning?: string
+  intro?: string
+  /** …or the lines it starts from, and where they're from. */
+  epigraph?: { quote: string; source: string }
+  pages: Stanza[][]
+}
+
+export const AUTHOR = 'Fia Bondy'
+
+const MICTECACIHUATL: Poem = {
+  id: 'mictecacihuatl',
   title: 'Mictēcacihuātl',
   say: 'Meek-te-ka-see-wah-tl',
   meaning:
@@ -83,6 +100,35 @@ export const POEM = {
       ],
     ],
     [['Death is equal', 'Death is infinite', 'Death is for everyone', 'And we must not be afraid']],
-  ] satisfies Stanza[][] as Stanza[][],
-  signature: 'Fia Bondy',
+  ],
 }
+
+const MERMAIDS: Poem = {
+  id: 'mermaids',
+  title: 'I Hear the Mermaids Singing',
+  epigraph: {
+    quote: '“I have heard the mermaids singing, each to each”',
+    source: '(The Love Song of J. Alfred Prufrock, 123)',
+  },
+  pages: [
+    [
+      ['I hear the mermaids singing,', 'With their flowing hair and scaly skin', 'With their sharp eyes and songs that sound like lullabies'],
+      ['I hear the mermaids singing', 'In a language I cannot understand', 'But I want to, I truly want to'],
+      [
+        'I hear the mermaids singing',
+        // too long for the page: it turns over before "crashing", the rest held together
+        'I follow the soft sounds of the waves crashing\u00a0against\u00a0the\u00a0shore',
+        'Until they get louder',
+      ],
+    ],
+    [
+      ['I hear the mermaids singing', 'Under the surface', 'It is a beautiful song'],
+      ['Such a beautiful song'],
+      ['I hear the mermaids singing', 'As I close my eyes', 'Ready for them to take me away'],
+      ['Please, take me away'],
+    ],
+    [['All I hear', 'Is the singing', 'Until it stops'], ['The crash of the waves against the shore'], ['Silence']],
+  ],
+}
+
+export const POEMS: Poem[] = [MICTECACIHUATL, MERMAIDS]
